@@ -5,6 +5,15 @@ import movies from "./shuffled_titles";
 import useFitText from "use-fit-text";
 import { Bar, BarChart, LabelList, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { stat } from 'fs';
+import { isPropertySignature } from 'typescript';
+
+
+const daysPassed = (date: Date) => {
+  let current = new Date(date.getTime()).getTime();
+  let previous = new Date(2022, 0, 1).getTime();
+  return Math.floor((current-previous)/8.64e7);
+}
+let currentDay = daysPassed(new Date());
 
 const getTimeToNewDay = () => {
   let d = new Date();
@@ -33,7 +42,8 @@ const TimeToNewDay = () => {
 const CustomizedDot = (props: any) => {
   const { cx, cy, stroke, payload, value } = props;
 
-  if (payload.visible) {
+  //if (payload.visible) {
+  if (false) {
     return (
       <svg x={cx - 4} y={cy - 4} width={8} height={8} fill="white">
         <g transform="translate(4 4)">
@@ -48,10 +58,32 @@ const CustomizedDot = (props: any) => {
 };
 
 const Statistics = (props: any) => {
-  
+  let days = Object.keys(props.stats).map(day => Number.parseInt(day));
+  let maxStreak = 0;
+  let prevDay = days[0];
+  let currentStreak = props.stats[days[0]].status === "WIN" ? 1 : 0;
+  days.slice(1).forEach(day => {
+    if (day === prevDay+1) {
+      currentStreak++;
+    } else {
+      maxStreak = Math.max(maxStreak, currentStreak);
+      currentStreak=0;
+    }
+    prevDay = day;
+  });
+  maxStreak = Math.max(maxStreak, currentStreak);
+  let lastDay = days[days.length-1];
+  if (currentDay !== lastDay)
+    currentStreak = 0;
+
+  let games = 0;
+  let wins = 0;
   const stripNumbers = (str: any) => str.replace(/[0-9]/g, "");
   let clueStats: any = {};
   Object.values(props.stats).forEach((stat: any) => {
+    if (stat.status === "WIN")
+      wins++;
+    games++;
     Object.keys(stat.clues).forEach((category) => {
       if (!clueStats[stripNumbers(category)])
         clueStats[stripNumbers(category)] = 0;
@@ -62,69 +94,82 @@ const Statistics = (props: any) => {
   let maxReveals = clueStats.reduce((prevMax: number, clue: any) => Math.max(prevMax, clue[1]), 0);
   clueStats = clueStats.map((clue: any) => ({"clue": clue[0][0].toUpperCase() + clue[0].slice(1), "reveals": clue[1], "revealFrac": clue[1]/maxReveals}));
   let playedDays = Object.keys(props.stats).length;
-  let pointStats = [];
+  let pointStats: any[] = [];
   for (let i = 0; i <= 110; i++) {
-    pointStats.push({"points": i, "probability": 50})
+    pointStats.push({"points": i, "probability": 0, "numTimes": 0})
   }
-  Object.values(props.stats).forEach((stat: any) => pointStats[stat.points] = {"points": stat.points, "probability": 50+0.5*stat.points/playedDays, "visible": stat.points === props.points});
-  return <div className="absolute bg-slate-900 rounded-lg w-[30rem] h-[40rem] flex flex-col items-center p-[1rem] z-10 text-white">
-    <span className="text-white text-xl">Statistics</span>
+  Object.values(props.stats).forEach((stat: any) => pointStats[stat.points]["numTimes"]++);
+  pointStats = pointStats.map(currPoint => ({
+    "points": currPoint.points,
+    "probability": currPoint.numTimes/playedDays,
+    "numTimes": currPoint.numTimes,
+    "visible": currPoint.points === props.points
+  }));
+  //Object.values(props.stats).forEach((stat: any) => {
+  //  pointStats[stat.points]["probability"] += 50+0.5*stat.points/playedDays, "visible": stat.points === props.points})
+  //}
+  return <>
+    <div onClick={props.onClose} className="absolute w-screen h-screen bg-black opacity-40"></div>
+    <div className="absolute bg-slate-900 rounded-lg w-[30rem] h-[40rem] flex flex-col items-center p-8 z-10 text-white">
+      <div onClick={props.onClose} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
+      <span className="text-white text-xl">Statistics</span>
 
-    <div className="w-full flex">
-      <div className="flex-1">
-        <div>Wins</div>
-        <div>{props.wins}</div>
+      <div className="w-full flex">
+        <div className="flex-1">
+          <div>Wins</div>
+          <div>{wins}</div>
+        </div>
+
+        <div className="flex-1">
+          <div>Win rate</div>
+          <div>{(wins/games*100).toFixed(0)}%</div>
+        </div>
+
+        <div className="flex-1">
+          <div>Highest streak</div>
+          <div>{maxStreak}</div>
+        </div>
+
+        <div className="flex-1">
+          <div>Current streak</div>
+          <div>{currentStreak}</div>
+        </div>
       </div>
-
-      <div className="flex-1">
-        <div>Win rate</div>
-        <div>{(props.wins/props.games*100).toFixed(0)}%</div>
-      </div>
-
-      <div className="flex-1">
-        <div>Highest streak</div>
-        <div>{props.highestStreak}</div>
-      </div>
-
-      <div className="flex-1">
-        <div>Current streak</div>
-        <div>{props.streak}</div>
-      </div>
-    </div>
-
-    <span className="text-white">Category distribution</span>
-    <ResponsiveContainer height={200}>
-      <BarChart data={clueStats} layout="vertical" barCategoryGap={0.9}>
-        <XAxis type="number" axisLine={false} tick={false}/>
-        <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{fill: "white"}}/>
-        <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
-          <LabelList dataKey="reveals" position="insideRight" fill="white"/>
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-    <span className="text-white">Point distribution</span>
-    <ResponsiveContainer height={200}>
-      <LineChart data={pointStats}>
-        <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white"/>
-        <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot/>}/>
-        <ReferenceLine x={props.points} stroke="green"/>
-      </LineChart>
-    </ResponsiveContainer>
-    <div className="text-white">Next movie in </div><TimeToNewDay/>
-    {/*
-    <div className="w-full grid grid-cols-[auto_1fr] gap-1">
-        {Object.keys(clueStats).map(category => <>
-            <div key={category+" label"} className="text-right">{category}</div>
-            <div key={category}>
-              <div className={`bg-lime-700 text-right`} style={{width: `calc(1em + ${clueStats[category]*10}%)`}}>
-                {clueStats[category]}
+      <div className="w-full h-4">&nbsp;</div>
+      <span className="text-white">Category distribution</span>
+      <ResponsiveContainer height={200}>
+        <BarChart data={clueStats} layout="vertical" barCategoryGap={0.9}>
+          <XAxis type="number" axisLine={false} tick={false}/>
+          <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{fill: "white"}}/>
+          <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
+            <LabelList dataKey="reveals" position="insideRight" fill="white"/>
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+      <span className="text-white">Point distribution</span>
+      <ResponsiveContainer height={200}>
+        <LineChart data={pointStats}>
+          <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white"/>
+          <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot/>}/>
+          <ReferenceLine x={props.points} stroke="green"/>
+        </LineChart>
+      </ResponsiveContainer>
+      <div className="text-white">Next movie in </div><TimeToNewDay/>
+      {/*
+      <div className="w-full grid grid-cols-[auto_1fr] gap-1">
+          {Object.keys(clueStats).map(category => <>
+              <div key={category+" label"} className="text-right">{category}</div>
+              <div key={category}>
+                <div className={`bg-lime-700 text-right`} style={{width: `calc(1em + ${clueStats[category]*10}%)`}}>
+                  {clueStats[category]}
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+      </div>
+      */}
     </div>
-    */}
-  </div>
+  </>
 }
 
 interface ClueProps {
@@ -273,13 +318,6 @@ let movies = [{
 
 
 
-const daysPassed = (date: Date) => {
-  let current = new Date(date.getTime()).getTime();
-  let previous = new Date(2022, 0, 1).getTime();
-  return Math.floor((current-previous)/8.64e7);
-}
-let currentDay = daysPassed(new Date());
-
 const getTitleMatches = (inputTitle: string) => titles.filter(title => title.toLowerCase().includes(inputTitle.toLocaleLowerCase())).slice(0,5);
 let movie: any = movies[currentDay % movies.length];
 let devHash = window.location.hash;
@@ -313,7 +351,14 @@ const saveWonGameToLocalStorage = (state: any, points: number, guesses: number, 
   localStorage.setItem("gameHistory", JSON.stringify(history))
 }
 
+const Navbar = (props: any) => {
 
+  return <div className="absolute w-screen top-0 h-16 bg-slate-900 flex-center">
+    <div className="w-[100vw] max-w-[40rem] h-full flex flex-row-reverse items-center">
+      <div onClick={props.onStats}className="text-white float-right cursor-pointer">Stats</div>
+    </div>
+  </div>
+}
 
 function App() {
   const [totalPoints, setTotalPoints] = useState(0);
@@ -324,6 +369,7 @@ function App() {
   const [possibleTitles, setPossibleTitles] = useState<string[]>([]);
   const [showAC, setShowAC] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   // should make this dynamic
   const [clueState, setClueState] = useState<guessState>({
       title: 0,
@@ -438,13 +484,15 @@ function App() {
       setWin(true);
       setGameOver(true)
       setWinScore(totalPoints);
+      setShowStats(true);
     } else {
       setGuesses(g => g+1);
     }
   }
   return (
     <div className="bg-slate-800 min-h-screen w-screen flex-center">
-      <Statistics stats={loadGameHistory()} wins={3} games={4} highestStreak={4} streak={4} points={winScore}/>
+      <Navbar onStats={() => setShowStats(true)}/>
+      {showStats && <Statistics onClose={() => setShowStats(false)} stats={loadGameHistory()} wins={3} games={4} highestStreak={4} streak={4} points={winScore}/>}
       <div className="bg-slate-900 text-center text-slate-50 w-[42rem] max-w-[100vw] min-h-[1000px] flex flex-col">
         <h1 className="text-7xl">{totalPoints}</h1>
         <div onBlur={() => setShowAC(false)}>
