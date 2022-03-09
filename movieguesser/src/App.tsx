@@ -11,16 +11,16 @@ import { isPropertySignature } from 'typescript';
 const daysPassed = (date: Date) => {
   let current = new Date(date.getTime()).getTime();
   let previous = new Date(2022, 0, 1).getTime();
-  return Math.floor((current-previous)/8.64e7);
+  return Math.floor((current - previous) / 8.64e7);
 }
 let currentDay = daysPassed(new Date());
 
 const getTimeToNewDay = () => {
   let d = new Date();
   return {
-    hours: 23-d.getHours(),
-    minutes: 59-d.getMinutes(),
-    seconds: 59-d.getSeconds()
+    hours: 23 - d.getHours(),
+    minutes: 59 - d.getMinutes(),
+    seconds: 59 - d.getSeconds()
   }
 }
 
@@ -33,10 +33,10 @@ const TimeToNewDay = () => {
     return () => clearInterval(i);
   })
   return <span className="text-white text-xl">
-      {timeLeft.hours.toString().padStart(2, "0")}:
-      {timeLeft.minutes.toString().padStart(2, "0")}:
-      {timeLeft.seconds.toString().padStart(2, "0")}
-    </span>
+    {timeLeft.hours.toString().padStart(2, "0")}:
+    {timeLeft.minutes.toString().padStart(2, "0")}:
+    {timeLeft.seconds.toString().padStart(2, "0")}
+  </span>
 }
 
 const CustomizedDot = (props: any) => {
@@ -63,16 +63,16 @@ const Statistics = (props: any) => {
   let prevDay = days[0];
   let currentStreak = props.stats[days[0]].status === "WIN" ? 1 : 0;
   days.slice(1).forEach(day => {
-    if (day === prevDay+1) {
+    if (day === prevDay + 1) {
       currentStreak++;
     } else {
       maxStreak = Math.max(maxStreak, currentStreak);
-      currentStreak=0;
+      currentStreak = 0;
     }
     prevDay = day;
   });
   maxStreak = Math.max(maxStreak, currentStreak);
-  let lastDay = days[days.length-1];
+  let lastDay = days[days.length - 1];
   if (currentDay !== lastDay)
     currentStreak = 0;
 
@@ -92,16 +92,16 @@ const Statistics = (props: any) => {
   });
   clueStats = Object.entries(clueStats)
   let maxReveals = clueStats.reduce((prevMax: number, clue: any) => Math.max(prevMax, clue[1]), 0);
-  clueStats = clueStats.map((clue: any) => ({"clue": clue[0][0].toUpperCase() + clue[0].slice(1), "reveals": clue[1], "revealFrac": clue[1]/maxReveals}));
+  clueStats = clueStats.map((clue: any) => ({ "clue": clue[0][0].toUpperCase() + clue[0].slice(1), "reveals": clue[1], "revealFrac": clue[1] / maxReveals }));
   let playedDays = Object.keys(props.stats).length;
   let pointStats: any[] = [];
   for (let i = 0; i <= 110; i++) {
-    pointStats.push({"points": i, "probability": 0, "numTimes": 0})
+    pointStats.push({ "points": i, "probability": 0, "numTimes": 0 })
   }
   Object.values(props.stats).forEach((stat: any) => pointStats[stat.points]["numTimes"]++);
   pointStats = pointStats.map(currPoint => ({
     "points": currPoint.points,
-    "probability": currPoint.numTimes/playedDays,
+    "probability": currPoint.numTimes / playedDays,
     "numTimes": currPoint.numTimes,
     "visible": currPoint.points === props.points
   }));
@@ -110,7 +110,7 @@ const Statistics = (props: any) => {
   //}
   return <>
     <div onClick={props.onClose} className="absolute w-screen h-screen bg-black opacity-40"></div>
-    <div className="absolute bg-slate-900 rounded-lg w-[30rem] h-[40rem] flex flex-col items-center p-8 z-10 text-white">
+    <div className="absolute bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 z-10 text-white">
       <div onClick={props.onClose} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
       <span className="text-white text-xl">Statistics</span>
 
@@ -122,7 +122,7 @@ const Statistics = (props: any) => {
 
         <div className="flex-1">
           <div>Win rate</div>
-          <div>{(wins/games*100).toFixed(0)}%</div>
+          <div>{(wins / games * 100).toFixed(0)}%</div>
         </div>
 
         <div className="flex-1">
@@ -139,22 +139,24 @@ const Statistics = (props: any) => {
       <span className="text-white">Category distribution</span>
       <ResponsiveContainer height={200}>
         <BarChart data={clueStats} layout="vertical" barCategoryGap={0.9}>
-          <XAxis type="number" axisLine={false} tick={false}/>
-          <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{fill: "white"}}/>
+          <XAxis type="number" axisLine={false} tick={false} />
+          <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
           <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
-            <LabelList dataKey="reveals" position="insideRight" fill="white"/>
+            <LabelList dataKey="reveals" position="insideRight" fill="white" />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
       <span className="text-white">Point distribution</span>
       <ResponsiveContainer height={200}>
         <LineChart data={pointStats}>
-          <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white"/>
-          <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot/>}/>
-          <ReferenceLine x={props.points} stroke="green"/>
+          <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white" />
+          <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} />
+          <ReferenceLine x={props.points} stroke="green" />
         </LineChart>
       </ResponsiveContainer>
-      <div className="text-white">Next movie in </div><TimeToNewDay/>
+      <div className="text-white">Next movie in </div><TimeToNewDay />
+      <div className="w-full h-2">&nbsp;</div>
+      <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
       {/*
       <div className="w-full grid grid-cols-[auto_1fr] gap-1">
           {Object.keys(clueStats).map(category => <>
@@ -182,7 +184,7 @@ interface ClueProps {
   reveals: number
 }
 
-const Clue = ({clue, value, maxReveals, onReveal, Child, pointCost, reveals}: ClueProps) => {
+const Clue = ({ clue, value, maxReveals, onReveal, Child, pointCost, reveals }: ClueProps) => {
   let colors: Record<number, string>;
   colors = {
     0: "bg-slate-400",
@@ -200,12 +202,12 @@ const Clue = ({clue, value, maxReveals, onReveal, Child, pointCost, reveals}: Cl
     if (reveals >= maxReveals)
       return;
     //const newRevealed = revealed+1
-    onReveal(reveals+1);
+    onReveal(reveals + 1);
     //setRevealed(newRevealed);
   }
 
   return <div className={`clue w-full h-full ${colors[reveals]}`} onClick={reveal}>
-    <Child value={value} reveal={reveals}/>
+    <Child value={value} reveal={reveals} />
   </div>
 }
 
@@ -213,8 +215,8 @@ interface ClueValProps {
   value: string,
   reveal: number
 }
-const Title = ({value, reveal}: ClueValProps) => {
-  let lettersToReveal = Math.ceil(value.length/10)*reveal;
+const Title = ({ value, reveal }: ClueValProps) => {
+  let lettersToReveal = Math.ceil(value.length / 10) * reveal;
   let step = Math.floor(value.length / (lettersToReveal));
   let title = ""
   for (let i = 0; i < value.length; i++) {
@@ -222,66 +224,66 @@ const Title = ({value, reveal}: ClueValProps) => {
     //title += value[i]
   }
   return <div>
-      <span>Title</span>
-      <br/>
-      <span className={`text-3xl ${reveal >= 1 || 'hidden'}`}>{title}</span>
-    </div>
+    <span>Title</span>
+    <br />
+    <span className={`text-3xl ${reveal >= 1 || 'hidden'}`}>{title}</span>
+  </div>
 }
 
-const Year = ({value, reveal}: ClueValProps) => {
+const Year = ({ value, reveal }: ClueValProps) => {
   return <div>
-      <span>Release year</span>
-      <br/>
-      {reveal >= 1 && <span className="text-7xl">{value}</span>}
-    </div>
+    <span>Release year</span>
+    <br />
+    {reveal >= 1 && <span className="text-7xl">{value}</span>}
+  </div>
 }
 
-const Poster = ({value, reveal}: ClueValProps) => {
+const Poster = ({ value, reveal }: ClueValProps) => {
   return <div className="overflow-hidden h-full">
-      <span>Poster</span>
-      {reveal >= 1 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-lg scale-125" src={value}/></div>}
-    </div>
+    <span>Poster</span>
+    {reveal >= 1 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-lg scale-125" src={value} /></div>}
+  </div>
 }
 
-const Rating = ({value, reveal}: ClueValProps) => {
+const Rating = ({ value, reveal }: ClueValProps) => {
   return <div>
-      <span>Rating</span>
-      <br/>
-      {reveal >= 1 && <span className="text-7xl">{value}</span>}
-    </div>
+    <span>Rating</span>
+    <br />
+    {reveal >= 1 && <span className="text-7xl">{value}</span>}
+  </div>
 }
 
-const Director = ({value, reveal}: ClueValProps) => {
+const Director = ({ value, reveal }: ClueValProps) => {
   return <div>
-      <span>Director</span>
-      <br/>
-      {reveal >= 1 && <span className="text-4xl">{value}</span>}
-    </div>
+    <span>Director</span>
+    <br />
+    {reveal >= 1 && <span className="text-4xl">{value}</span>}
+  </div>
 }
 
-const Writer = ({value, reveal}: ClueValProps) => {
+const Writer = ({ value, reveal }: ClueValProps) => {
   return <div>
-      <span>Writer</span>
-      <br/>
-      {reveal >= 1 && <span className="text-4xl">{value}</span>}
-    </div>
+    <span>Writer</span>
+    <br />
+    {reveal >= 1 && <span className="text-4xl">{value}</span>}
+  </div>
 }
 
-const Quote = ({value, reveal}: ClueValProps) => {
+const Quote = ({ value, reveal }: ClueValProps) => {
   return <div>
-      <span>Quote</span>
-      <br/>
-      {reveal >= 1 && <span className="text-4xl italic">"{value}"</span>}
-    </div>
+    <span>Quote</span>
+    <br />
+    {reveal >= 1 && <span className="text-4xl italic">"{value}"</span>}
+  </div>
 }
 
 const Actor = (props: any) => {
   return <div className="overflow-hidden h-full">
-      {props.reveal == 0 && <span>Actor</span>}
-      {props.reveal >= 1 && <span className="text-xl">{props.value.name}</span>}
-      {props.reveal == 1 && <div className=" h-full flex-center"><span className="text-xl">Show image</span></div>}
-      {props.reveal >= 2 && <img className="h-full w-full object-cover" src={props.value.image}/>}
-    </div>
+    {props.reveal == 0 && <span>Actor</span>}
+    {props.reveal >= 1 && <span className="text-xl">{props.value.name}</span>}
+    {props.reveal == 1 && <div className=" h-full flex-center"><span className="text-xl">Show image</span></div>}
+    {props.reveal >= 2 && <img className="h-full w-full object-cover" src={props.value.image} />}
+  </div>
 }
 
 /*
@@ -318,7 +320,7 @@ let movies = [{
 
 
 
-const getTitleMatches = (inputTitle: string) => titles.filter(title => title.toLowerCase().includes(inputTitle.toLocaleLowerCase())).slice(0,5);
+const getTitleMatches = (inputTitle: string) => titles.filter(title => title.toLowerCase().includes(inputTitle.toLocaleLowerCase())).slice(0, 5);
 let movie: any = movies[currentDay % movies.length];
 let devHash = window.location.hash;
 if (devHash == "#1") {
@@ -355,10 +357,23 @@ const Navbar = (props: any) => {
 
   return <div className="absolute w-screen top-0 h-16 bg-slate-900 flex-center">
     <div className="w-[100vw] max-w-[40rem] h-full flex flex-row-reverse items-center">
-      <div onClick={props.onStats}className="text-white float-right cursor-pointer">Stats</div>
+      <div onClick={props.onStats} className="text-white float-right cursor-pointer">Stats</div>
     </div>
   </div>
 }
+
+const clue2 = ["⬛", "🟩"];
+const clue3 = ["⬛", "🟨", "🟩"];
+
+const generateShareString = (gameState: any) => `🇹:${clue3[gameState.title]}
+🇾:${clue2[gameState.year]}
+🇵:${clue2[gameState.poster]}
+🇷:${clue2[gameState.rating]}
+🇩:${clue2[gameState.director]}
+🇼:${clue2[gameState.writer]}
+🇶:${clue2[gameState.quote]}
+🇦:${clue3[gameState.actor1]}${clue3[gameState.actor2]}${clue3[gameState.actor3]}
+`
 
 function App() {
   const [totalPoints, setTotalPoints] = useState(0);
@@ -372,17 +387,17 @@ function App() {
   const [showStats, setShowStats] = useState(false);
   // should make this dynamic
   const [clueState, setClueState] = useState<guessState>({
-      title: 0,
-      year: 0,
-      poster: 0,
-      rating: 0,
-      director: 0,
-      writer: 0,
-      quote: 0,
-      actor1: 0,
-      actor2: 0,
-      actor3: 0
-    });
+    title: 0,
+    year: 0,
+    poster: 0,
+    rating: 0,
+    director: 0,
+    writer: 0,
+    quote: 0,
+    actor1: 0,
+    actor2: 0,
+    actor3: 0
+  });
 
   const loadGameState = () => {
     let state = localStorage.getItem("gameState")
@@ -409,8 +424,8 @@ function App() {
   }
   const increaseClueState = (category: string) => {
     setClueState((prevGuessState: guessState) => {
-      let newGuessState: guessState = {...prevGuessState}
-      newGuessState[category] = prevGuessState[category]+1
+      let newGuessState: guessState = { ...prevGuessState }
+      newGuessState[category] = prevGuessState[category] + 1
       return newGuessState;
     });
   }
@@ -428,7 +443,7 @@ function App() {
     if (clueName === "poster") {
       value = movie["image"]
     } else if (id !== -1) {
-      value = movie[clueName + "s"][id-1]
+      value = movie[clueName + "s"][id - 1]
     } else {
       value = movie[clueName]
     }
@@ -459,7 +474,7 @@ function App() {
   addClue("actor", Actor, actorGuesses, 3)
 
 
-  
+
   useEffect(() => {
     loadGameState();
   }, [])
@@ -486,70 +501,70 @@ function App() {
       setWinScore(totalPoints);
       setShowStats(true);
     } else {
-      setGuesses(g => g+1);
+      setGuesses(g => g + 1);
     }
   }
   return (
     <div className="bg-slate-800 min-h-screen w-screen flex-center">
-      <Navbar onStats={() => setShowStats(true)}/>
-      {showStats && <Statistics onClose={() => setShowStats(false)} stats={loadGameHistory()} wins={3} games={4} highestStreak={4} streak={4} points={winScore}/>}
+      <Navbar onStats={() => setShowStats(true)} />
+      {showStats && <Statistics onClose={() => setShowStats(false)} stats={loadGameHistory()} wins={3} games={4} highestStreak={4} streak={4} points={winScore} onShare={() => navigator.clipboard.writeText(generateShareString(clueState))} />}
       <div className="bg-slate-900 text-center text-slate-50 w-[42rem] max-w-[100vw] min-h-[1000px] flex flex-col">
         <h1 className="text-7xl">{totalPoints}</h1>
         <div onBlur={() => setShowAC(false)}>
           <input onFocus={() => setShowAC(true)} onChange={e => setTitleInput(e.target.value)} value={titleInput} className="bg-transparent border border-blue-700 h-8" placeholder="Guess..."></input><button className="bg-slate-600 py-1 px-3" onClick={guess}>&gt;</button>
           {showAC && <ul className="absolute bg-black opacity-90 w-[42rem] max-w-[100vw]">{possibleTitles.map(title => <li key={title} onMouseDown={() => setTitleInput(title)} className="cursor-pointer">{title}</li>)}</ul>}
         </div>
-        <br/>
+        <br />
         {win && <span>You win! Congratulations! Score: {winScore}/110</span>}
-        {!win && <span>{"❌".repeat(guesses) + "⬛".repeat(3-guesses)}</span>}
-        {guesses == 3 && <><br/><span>You lose, the movie was {movie.title}</span></>}
+        {!win && <span>{"❌".repeat(guesses) + "⬛".repeat(3 - guesses)}</span>}
+        {guesses == 3 && <><br /><span>You lose, the movie was {movie.title}</span></>}
         {/*<div className="p-4 grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr_1fr] grid-cols-3 gap-4 w-128 min-w-[42em] max-w-[42em] min-h-[80vh] max-h-[80vh]">*/}
         <div id="clueTable" className="p-4">
-          <div className="title"><Clue 
+          <div className="title"><Clue
             {...clueSpecification["title"]}
-            />
+          />
           </div>
 
           <div className="poster">
-            <Clue 
+            <Clue
               {...clueSpecification["poster"]}
             />
           </div>
 
           <div className="year">
-            <Clue 
+            <Clue
               {...clueSpecification["year"]}
             />
           </div>
 
           <div className="rating">
-            <Clue 
+            <Clue
               {...clueSpecification["rating"]}
             />
           </div>
 
           <div className="director">
-            <Clue 
+            <Clue
               {...clueSpecification["director"]}
             />
           </div>
 
           <div className="writer">
-            <Clue 
+            <Clue
               {...clueSpecification["writer"]}
             />
           </div>
 
           <div className="quote">
-            <Clue 
+            <Clue
               {...clueSpecification["quote"]}
             />
           </div>
 
-          {movie.actors.map((actor: any, id: number) => 
+          {movie.actors.map((actor: any, id: number) =>
             <div key={actor.name} className="actor">
-              <Clue 
-                {...clueSpecification["actor" + (id+1).toString()]}
+              <Clue
+                {...clueSpecification["actor" + (id + 1).toString()]}
               />
             </div>)}
         </div>
