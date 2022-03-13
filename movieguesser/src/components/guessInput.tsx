@@ -36,7 +36,7 @@ const GuessInput = (props: any) => {
 
         {showSuggestions &&
           <ul
-            className="absolute bg-black opacity-90 w-[42rem] max-w-[100vw]"
+            className="absolute bg-black opacity-90 w-[42rem] max-w-[100vw] z-10"
           >
             {suggestions.map(title =>
               <li

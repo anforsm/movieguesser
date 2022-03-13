@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { isPropertySignature } from "typescript";
+
 interface ClueProps {
   clue: string,
   maxReveals: number,
@@ -10,6 +13,10 @@ interface ClueProps {
 }
 
 const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals }: ClueProps) => {
+  const [flipSide, setFlipSide] = useState(false);
+  const [flipped, setFlipped] = useState(false);
+  const [animate, setAnimate] = useState(false);
+  const [deanimate, setDeanimate] = useState(false);
   let colors: Record<number, string>;
   colors = {
     0: "bg-slate-400",
@@ -26,13 +33,29 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   const reveal = () => {
     if (reveals >= maxReveals)
       return;
+    setFlipSide(prevSide => !prevSide);
+    setTimeout(() => {
+      onReveal(reveals + 1)
+      setFlipped(flipped => !flipped)
+    }, 500);
     //const newRevealed = revealed+1
-    onReveal(reveals + 1);
-    //setRevealed(newRevealed);
+    //setTimeout(() => onReveal(reveals + 1), 500);
+    //setTimeout(() => setDeanimate(prevDeanimate => !prevDeanimate), 500);
+    //setTimeout(() => setDeanimate(prevDeanimate => !prevDeanimate), 600);
+    //setAnimate(prevAnimate => !prevAnimate);
+    //setRevealed(revealed+1);
+
   }
 
-  return <div className={`clue w-full h-full ${colors[reveals]}`} onClick={reveal}>
-    <Component value={value} reveal={reveals} />
+  return <div className={`clue w-full h-full `} onClick={reveal}>
+    <div className={`content w-full h-full ${flipSide ? "flip" : ""}`}>
+      <div className={`face one ${colors[flipped ? reveals + 1 : reveals]}`}>
+        <Component value={value} reveal={flipped ? reveals + 1 : reveals} />
+      </div>
+      <div className={`face two overflow-hidden ${colors[flipped ? reveals : reveals + 1]}`}>
+        <Component value={value} reveal={flipped ? reveals : reveals + 1} />
+      </div>
+    </div>
   </div>
 }
 

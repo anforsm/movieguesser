@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Bar, BarChart, LabelList, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { curveCardinal } from "d3-shape";
+import useLockBodyScroll from "../hooks/useLockBodyScroll";
+const curveFunction = curveCardinal;
 
 const getTimeToNewDay = () => {
   let d = new Date();
@@ -44,6 +47,7 @@ const CustomizedDot = (props: any) => {
 };
 
 const Statistics = (props: any) => {
+  useLockBodyScroll();
   let days = Object.keys(props.stats).map(day => Number.parseInt(day));
   let maxStreak = 0;
   let prevDay = days[0];
@@ -85,64 +89,106 @@ const Statistics = (props: any) => {
   for (let i = 0; i <= 110; i++) {
     pointStats.push({ "points": i, "probability": 0, "numTimes": 0 })
   }
-  Object.values(props.stats).forEach((stat: any) => pointStats[stat.points]["numTimes"]++);
+  Object.values(props.stats).forEach((stat: any) => {
+    const spread = 20;
+    let minPoint = Math.max(0, stat.points - spread);
+    let maxPoint = Math.min(110, stat.points + spread);
+    for (let currPoint = minPoint; currPoint <= maxPoint; currPoint++) {
+      pointStats[currPoint]["numTimes"] += (Math.pow((spread - Math.abs(stat.points - currPoint)), 2));
+    }
+    //pointStats[stat.points]["numTimes"]++
+  });
+
+  let totalTimes = pointStats.reduce((currTimes, pointStat) => pointStat["numTimes"] + currTimes, 0)
   pointStats = pointStats.map(currPoint => ({
     "points": currPoint.points,
-    "probability": currPoint.numTimes / playedDays,
+    "probability": currPoint.numTimes / totalTimes,
     "numTimes": currPoint.numTimes,
     "visible": currPoint.points === props.points
   }));
   return <>
-    <div onClick={props.onClose} className="absolute w-screen h-screen bg-black opacity-40"></div>
-    <div className="absolute bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 z-10 text-white">
-      <div onClick={props.onClose} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
-      <span className="text-white text-xl">Statistics</span>
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          props.onClose()
+        }
+      }}
+      className="absolute w-screen h-screen bg-black/50 flex-center top-0"
+    >
+      <div id="statistics" className="bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 z-10 text-white relative">
+        <div onClick={props.onClose} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
 
-      <div className="w-full flex">
-        <div className="flex-1">
-          <div>Wins</div>
-          <div>{wins}</div>
-        </div>
+        <span className="text-white text-xl">
+          Statistics
+        </span>
+        <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
 
-        <div className="flex-1">
-          <div>Win rate</div>
-          <div>{(wins / games * 100).toFixed(0)}%</div>
-        </div>
+        <div className="w-full h-4">&nbsp;</div>
 
-        <div className="flex-1">
-          <div>Highest streak</div>
-          <div>{maxStreak}</div>
-        </div>
+        <span className="text-white">
+          Category distribution
+        </span>
+        <CategoryBarChart clueStats={clueStats} />
 
-        <div className="flex-1">
-          <div>Current streak</div>
-          <div>{currentStreak}</div>
-        </div>
+        <span className="text-white">
+          Point distribution
+        </span>
+        <PointDistributionLineChart points={props.points} pointStats={pointStats} />
+
+        <div className="text-white">Next movie in </div><TimeToNewDay />
+        <div className="w-full h-2">&nbsp;</div>
+
+        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
       </div>
-      <div className="w-full h-4">&nbsp;</div>
-      <span className="text-white">Category distribution</span>
-      <ResponsiveContainer height={200}>
-        <BarChart data={clueStats} layout="vertical" barCategoryGap={0.9}>
-          <XAxis type="number" axisLine={false} tick={false} />
-          <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
-          <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
-            <LabelList dataKey="reveals" position="insideRight" fill="white" />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-      <span className="text-white">Point distribution</span>
-      <ResponsiveContainer height={200}>
-        <LineChart data={pointStats}>
-          <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white" />
-          <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} />
-          <ReferenceLine x={props.points} stroke="green" />
-        </LineChart>
-      </ResponsiveContainer>
-      <div className="text-white">Next movie in </div><TimeToNewDay />
-      <div className="w-full h-2">&nbsp;</div>
-      <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
     </div>
   </>
 }
+
+const SimpleTextStats = (props: any) => (
+  <div className="w-full flex">
+    <div className="flex-1">
+      <div>Wins</div>
+      <div>{props.wins}</div>
+    </div>
+
+    <div className="flex-1">
+      <div>Win rate</div>
+      <div>{(props.wins / props.games * 100).toFixed(0)}%</div>
+    </div>
+
+    <div className="flex-1">
+      <div>Highest streak</div>
+      <div>{props.maxStreak}</div>
+    </div>
+
+    <div className="flex-1">
+      <div>Current streak</div>
+      <div>{props.currentStreak}</div>
+    </div>
+  </div>
+)
+
+const CategoryBarChart = (props: any) => (
+  <ResponsiveContainer height={200}>
+    <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
+      <XAxis type="number" axisLine={false} tick={false} />
+      <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
+      <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
+        <LabelList dataKey="reveals" position="insideRight" fill="white" />
+      </Bar>
+    </BarChart>
+  </ResponsiveContainer>)
+
+const PointDistributionLineChart = (props: any) => (
+  <ResponsiveContainer height={200}>
+    <LineChart data={props.pointStats}>
+      <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white" />
+      <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} />
+      <ReferenceLine x={props.points} stroke="green" />
+    </LineChart>
+  </ResponsiveContainer>
+)
+
+
 
 export default Statistics;

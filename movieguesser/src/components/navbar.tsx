@@ -1,6 +1,6 @@
 const Navbar = (props: any) => {
 
-  return <div className="absolute w-screen top-0 h-16 bg-slate-900 flex-center">
+  return <div id="navbar" className="w-screen h-full bg-slate-900 flex-center m-0">
     <div className="w-[100vw] max-w-[40rem] h-full flex flex-row-reverse items-center">
       <div onClick={props.onStats} className="text-white float-right cursor-pointer">Stats</div>
     </div>

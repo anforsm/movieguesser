@@ -49,10 +49,12 @@ const Game = (props: any) => {
   }
 
   return (
-    <div className="bg-slate-900 text-center text-slate-50 w-[42rem] max-w-[100vw] min-h-[1000px] flex flex-col">
-      <h1 className="text-7xl">{props.points}</h1>
-      <GuessInput onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} />
-      <ClueGrid onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
+    <div id="game" className="flex-center">
+      <div className="bg-slate-900 text-center text-slate-50 w-[42rem] max-w-[100vw] min-h-[1000px] flex flex-col">
+        <h1 className="text-7xl">{props.points}</h1>
+        <GuessInput onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />
+        <ClueGrid onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
+      </div>
     </div>
   )
 }
