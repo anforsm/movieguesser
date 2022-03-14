@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { isPropertySignature } from "typescript";
+import { useLongPress } from "use-long-press";
 
 interface ClueProps {
   clue: string,
@@ -17,7 +18,16 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   const [flipped, setFlipped] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [deanimate, setDeanimate] = useState(false);
+  const [showPointCost, setShowPointCost] = useState(false);
   let colors: Record<number, string>;
+
+  const bind = useLongPress(() => {
+  }, {
+    onStart: e => setShowPointCost(true),
+    onFinish: e => setShowPointCost(false),
+    onCancel: e => setShowPointCost(false),
+  })
+
   colors = {
     0: "bg-slate-400",
   };
@@ -47,7 +57,8 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
 
   }
 
-  return <div className={`clue w-full h-full `} onClick={reveal}>
+  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full `} onClick={reveal}>
+    <div className={`${showPointCost ? "flex" : "invisible"} pointCost absolute z-10 w-full h-full flex-center text-7xl ${reveals !== maxReveals ? "bg-zinc-500/40" : ""} `}>{pointCost[reveals]}</div>
     <div className={`content w-full h-full ${flipSide ? "flip" : ""}`}>
       <div className={`face one ${colors[flipped ? reveals + 1 : reveals]}`}>
         <Component value={value} reveal={flipped ? reveals + 1 : reveals} />

@@ -61,7 +61,6 @@ const Statistics = (props: any) => {
     }
     prevDay = day;
   });
-  console.log(currentStreak)
   maxStreak = Math.max(maxStreak, currentStreak);
   let lastDay = days[days.length - 1];
   if (props.currentDay !== lastDay)
@@ -106,42 +105,49 @@ const Statistics = (props: any) => {
     "numTimes": currPoint.numTimes,
     "visible": currPoint.points === props.points
   }));
-  return <>
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          props.onClose()
-        }
-      }}
-      className="absolute w-screen h-screen bg-black/50 flex-center top-0"
-    >
-      <div id="statistics" className="bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 z-10 text-white relative">
-        <div onClick={props.onClose} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
 
-        <span className="text-white text-xl">
-          Statistics
-        </span>
-        <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
+  const [closing, setClosing] = useState(false);
+  const close = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setClosing(false);
+      props.onClose();
+    }, 200)
+  }
+  return <div id="statisticsBG"
+    onClick={(e) => {
+      if (e.target === e.currentTarget) {
+        close()
+      }
+    }}
+    className={`absolute w-screen h-screen bg-black/50 flex-center top-0 z-20 ${closing ? "closing" : ""}`}
+  >
+    <div id="statistics" className={`bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
+      <div onClick={close} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
 
-        <div className="w-full h-4">&nbsp;</div>
+      <span className="text-white text-xl">
+        Statistics
+      </span>
+      <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
 
-        <span className="text-white">
-          Category distribution
-        </span>
-        <CategoryBarChart clueStats={clueStats} />
+      <div className="w-full h-4">&nbsp;</div>
 
-        <span className="text-white">
-          Point distribution
-        </span>
-        <PointDistributionLineChart points={props.points} pointStats={pointStats} />
+      <span className="text-white">
+        Category distribution
+      </span>
+      <CategoryBarChart clueStats={clueStats} />
 
-        <div className="text-white">Next movie in </div><TimeToNewDay />
-        <div className="w-full h-2">&nbsp;</div>
+      <span className="text-white">
+        Point distribution
+      </span>
+      <PointDistributionLineChart points={props.points} pointStats={pointStats} />
 
-        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
-      </div>
+      <div className="text-white">Next movie in </div><TimeToNewDay />
+      <div className="w-full h-2">&nbsp;</div>
+
+      <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
     </div>
-  </>
+  </div>
 }
 
 const SimpleTextStats = (props: any) => (

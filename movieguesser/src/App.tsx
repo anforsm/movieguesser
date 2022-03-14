@@ -55,7 +55,7 @@ function App() {
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
 
   return (
-    <div className="bg-slate-800 min-h-screen w-screen flex-center">
+    <div id="app" className="bg-slate-800 min-h-screen w-screen flex-center">
       <Navbar onStats={() => setShowStats(true)} />
 
       {showStats &&
@@ -74,6 +74,7 @@ function App() {
             let history = gameHistory ? JSON.parse(gameHistory) : {};
             history[currentDay] = newGameState;
             localStorage.setItem("gameHistory", JSON.stringify(history))
+            setShowStats(true)
           }
           setGameState(newGameState)
         }}
