@@ -155,7 +155,8 @@ code {
     "navbar "
     "game   "
   ;
-  grid-template-rows: 2rem;
+  grid-template-rows: 2rem 1fr;
+  grid-template-columns: 1fr;
   grid-gap: 1rem;
 }
 
@@ -168,7 +169,6 @@ code {
 }
 
 #clueTable {
-  flex-grow: 1;
   display: grid;
   grid-gap: 10px;
   grid-template:
@@ -178,7 +178,7 @@ code {
     "quote    quote     quote   "
     "actor    actor     actor   "
   ;
-  grid-template-rows: 7rem 8rem 11rem 10rem 18rem;
+  grid-template-rows: 7fr 8fr 11fr 10fr 18fr;
   grid-template-columns: repeat(3, 1fr);
 }
 

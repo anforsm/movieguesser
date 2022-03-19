@@ -3,7 +3,7 @@ import Clue from "./clue"
 
 const ClueGrid = (props: any) => {
   return (
-    <div id="clueTable" className="p-4">
+    <div id="clueTable" className="p-4 aspect-[7/10] grow">
       {Object.values(clueSpecification).map((clue: any) => (
         <div key={clue.clueID} className={clue.clue}>
           <Clue

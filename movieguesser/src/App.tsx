@@ -63,10 +63,10 @@ function App() {
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
   const [newNotification, setNewNotification] = useState<string>();
 
+      //<Notifications notificationHandler={notificationHandler} />
   return (
-    <div id="app" className="bg-dark-900 min-h-screen w-screen flex-center">
+    <div id="app" className="bg-dark-900 min-h-screen max-h-screen w-screen">
       <Navbar onStats={() => setShowStats(true)} />
-      <Notifications notificationHandler={notificationHandler} />
 
       {showStats &&
         <Statistics
@@ -80,6 +80,7 @@ function App() {
           }}
         />}
 
+      <div className="flex-center flex-col mb-2">
       <Game
         {...gameState}
         onNewGameState={(newGameState: any) => {
@@ -95,6 +96,7 @@ function App() {
         }}
         movieInfo={movie}
       />
+      </div>
       {DEV && <button className="bg-white" onClick={() => notificationHandler.sendNotification("test")}>Send test notification</button>}
 
     </div>
