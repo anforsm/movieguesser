@@ -4,6 +4,8 @@ import Game from './components/game';
 import Statistics from './components/statistics';
 import Navbar from './components/navbar';
 import useGameState from './hooks/useGameState';
+import Notifications from './components/notification';
+import NotificationHandler from './models/notificationHandler';
 const movies = oldmovies.map(movie => {
   let newMovie: any = { ...movie }
   newMovie.poster = newMovie["image"];
@@ -20,6 +22,8 @@ const daysPassed = (date: Date) => {
 let currentDay = daysPassed(new Date());
 let movie: any = movies[currentDay % movies.length];
 
+
+let DEV = false;
 let devHash = window.location.hash;
 if (devHash == "#1") {
   movie = movies.filter(mov => mov.title == "Borat: Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan")[0]
@@ -27,6 +31,8 @@ if (devHash == "#1") {
   movie = movies.filter(mov => mov.title == "Up")[0]
 } else if (devHash == "#3") {
   movie = movies.filter(mov => mov.title == "Don't Look Up")[0]
+} else if (devHash == "#dev") {
+  DEV = true;
 }
 
 const clue2 = ["⬛", "🟩"];
@@ -50,13 +56,17 @@ const loadGameHistory = () => {
   return [];
 }
 
+const notificationHandler = new NotificationHandler()
+
 function App() {
   const [showStats, setShowStats] = useState(false);
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
+  const [newNotification, setNewNotification] = useState<string>();
 
   return (
-    <div id="app" className="bg-slate-800 min-h-screen w-screen flex-center">
+    <div id="app" className="bg-dark-900 min-h-screen w-screen flex-center">
       <Navbar onStats={() => setShowStats(true)} />
+      <Notifications notificationHandler={notificationHandler} />
 
       {showStats &&
         <Statistics
@@ -64,7 +74,11 @@ function App() {
           stats={loadGameHistory()}
           points={gameState.points}
           currentDay={currentDay}
-          onShare={() => navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))} />}
+          onShare={() => {
+            navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))
+            notificationHandler.sendNotification("Copied results to clipboard")
+          }}
+        />}
 
       <Game
         {...gameState}
@@ -76,10 +90,12 @@ function App() {
             localStorage.setItem("gameHistory", JSON.stringify(history))
             setShowStats(true)
           }
+
           setGameState(newGameState)
         }}
         movieInfo={movie}
       />
+      {DEV && <button className="bg-white" onClick={() => notificationHandler.sendNotification("test")}>Send test notification</button>}
 
     </div>
   );

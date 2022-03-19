@@ -28,7 +28,7 @@ const GuessInput = (props: any) => {
         />
 
         <button
-          className="bg-slate-600 py-1 px-3"
+          className="bg-dark-600 py-1 px-3"
           onClick={onGuess}
         >
           &gt;

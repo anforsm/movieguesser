@@ -29,15 +29,15 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   })
 
   colors = {
-    0: "bg-slate-400",
+    0: "bg-clue-gray",
   };
   if (maxReveals === 2) {
-    colors[1] = "bg-yellow-400";
-    colors[2] = "bg-green-400";
+    colors[1] = "bg-clue-yellow";
+    colors[2] = "bg-clue-green";
   }
 
   if (maxReveals === 1) {
-    colors[1] = "bg-green-400";
+    colors[1] = "bg-clue-green";
   }
 
   const reveal = () => {

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Bar, BarChart, LabelList, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, LabelList, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { curveCardinal } from "d3-shape";
 import useLockBodyScroll from "../hooks/useLockBodyScroll";
+import { addSyntheticTrailingComment } from "typescript";
 const curveFunction = curveCardinal;
 
 const getTimeToNewDay = () => {
@@ -47,6 +48,7 @@ const CustomizedDot = (props: any) => {
 };
 
 const Statistics = (props: any) => {
+  const [experimental, setExperimental] = useState(true);
   useLockBodyScroll();
   let days = Object.keys(props.stats).map(day => Number.parseInt(day));
   let maxStreak = 0;
@@ -88,12 +90,18 @@ const Statistics = (props: any) => {
   for (let i = 0; i <= 110; i++) {
     pointStats.push({ "points": i, "probability": 0, "numTimes": 0 })
   }
+  const std = 4;
+  const f = (x: number, mean: number) => Math.exp(-1 / 2 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
   Object.values(props.stats).forEach((stat: any) => {
     const spread = 20;
     let minPoint = Math.max(0, stat.points - spread);
     let maxPoint = Math.min(110, stat.points + spread);
     for (let currPoint = minPoint; currPoint <= maxPoint; currPoint++) {
-      pointStats[currPoint]["numTimes"] += (Math.pow((spread - Math.abs(stat.points - currPoint)), 2));
+      if (experimental) {
+        pointStats[currPoint]["numTimes"] += (Math.pow((spread - Math.abs(stat.points - currPoint)), 2));
+      } else {
+        pointStats[currPoint]["numTimes"] += f(currPoint, stat.points);
+      }
     }
     //pointStats[stat.points]["numTimes"]++
   });
@@ -122,12 +130,15 @@ const Statistics = (props: any) => {
     }}
     className={`absolute w-screen h-screen bg-black/50 flex-center top-0 z-20 ${closing ? "closing" : ""}`}
   >
-    <div id="statistics" className={`bg-slate-900 rounded-lg w-[30rem] h-[43rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
+    <div id="statistics" className={`bg-dark-900 rounded-lg w-[30rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
       <div onClick={close} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
+      <input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
 
       <span className="text-white text-xl">
         Statistics
       </span>
+      <div className="w-full h-4">&nbsp;</div>
+
       <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
 
       <div className="w-full h-4">&nbsp;</div>
@@ -135,7 +146,9 @@ const Statistics = (props: any) => {
       <span className="text-white">
         Category distribution
       </span>
-      <CategoryBarChart clueStats={clueStats} />
+      {experimental && <CategoryBarChart clueStats={clueStats} />}
+      {!experimental && <CategoryRadarChart clueStats={clueStats} />}
+
 
       <span className="text-white">
         Point distribution
@@ -150,11 +163,25 @@ const Statistics = (props: any) => {
   </div>
 }
 
-const SimpleTextStats = (props: any) => (
+const SimpleTextStats = (props: any) => {
+  let stats: any = []
+  const addStat = (label: string, value: any) => stats.push({ "label": label, "value": value });
+  addStat("Games", props.games);
+  addStat("Win Rate", (props.wins / props.games * 100).toFixed(0).toString() + "%");
+  addStat("Highest Streak", props.maxStreak);
+  addStat("Current Streak", props.currentStreak);
+  return <div className="w-full flex">
+    {stats.map((stat: any) =>
+      <div key={stat.label} className="flex-1 border-white m-2 p-1 rounded-md flex-center flex-col bg-dark-700">
+        <div className="text-2xl font-bold">{stat.value}</div>
+        <div className="text-xs">{stat.label}</div>
+      </div>)}
+  </div>
+  /*
   <div className="w-full flex">
     <div className="flex-1">
-      <div>Wins</div>
-      <div>{props.wins}</div>
+      <div>Games</div>
+      <div>{props.games}</div>
     </div>
 
     <div className="flex-1">
@@ -172,10 +199,21 @@ const SimpleTextStats = (props: any) => (
       <div>{props.currentStreak}</div>
     </div>
   </div>
+  */
+}
+
+const CategoryRadarChart = (props: any) => (
+  <ResponsiveContainer height={250}>
+    <RadarChart outerRadius={90} data={props.clueStats}>
+      <PolarGrid />
+      <PolarAngleAxis dataKey="clue" tick={{ fill: "white" }} />
+      <Radar dataKey="revealFrac" fill="green" fillOpacity={0.8} />
+    </RadarChart>
+  </ResponsiveContainer>
 )
 
 const CategoryBarChart = (props: any) => (
-  <ResponsiveContainer height={200}>
+  <ResponsiveContainer height={250}>
     <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
       <XAxis type="number" axisLine={false} tick={false} />
       <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
