@@ -63,10 +63,14 @@ function App() {
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
   const [newNotification, setNewNotification] = useState<string>();
 
-      //<Notifications notificationHandler={notificationHandler} />
   return (
-    <div id="app" className="bg-dark-900 min-h-screen max-h-screen w-screen">
-      <Navbar onStats={() => setShowStats(true)} />
+    <div id="app" className="bg-dark-900 min-h-screen max-h-screen h-full w-screen">
+      <Notifications notificationHandler={notificationHandler} />
+      <Navbar
+        onStats={() => setShowStats(true)}
+        onInfo={() => notificationHandler.sendNotification("Tutorial coming soon...")}
+        onSettings={() => notificationHandler.sendNotification("Settings coming soon...")}
+      />
 
       {showStats &&
         <Statistics
@@ -81,23 +85,23 @@ function App() {
         />}
 
       <div className="flex-center flex-col mb-2">
-      <Game
-        {...gameState}
-        onNewGameState={(newGameState: any) => {
-          if (newGameState.status !== "UNFINISHED") {
-            let gameHistory = localStorage.getItem("gameHistory");
-            let history = gameHistory ? JSON.parse(gameHistory) : {};
-            history[currentDay] = newGameState;
-            localStorage.setItem("gameHistory", JSON.stringify(history))
-            setShowStats(true)
-          }
+        <Game
+          {...gameState}
+          onNewGameState={(newGameState: any) => {
+            if (newGameState.status !== "UNFINISHED") {
+              let gameHistory = localStorage.getItem("gameHistory");
+              let history = gameHistory ? JSON.parse(gameHistory) : {};
+              history[currentDay] = newGameState;
+              localStorage.setItem("gameHistory", JSON.stringify(history))
+              setShowStats(true)
+            }
 
-          setGameState(newGameState)
-        }}
-        movieInfo={movie}
-      />
+            setGameState(newGameState)
+          }}
+          movieInfo={movie}
+        />
       </div>
-      {DEV && <button className="bg-white" onClick={() => notificationHandler.sendNotification("test")}>Send test notification</button>}
+      {DEV && <button className="bg-white" onClick={() => { localStorage.removeItem("gameState"); window.location.reload() }}>Reset day</button>}
 
     </div>
   );

@@ -47,15 +47,17 @@ const Game = (props: any) => {
 
     props.onNewGameState(newState);
   }
-//min-h-[1000px]  w-[42rem]
-    //<div id="game" className="flex-center grow">
-    //</div>
+  //min-h-[1000px]  w-[42rem]
+  //<div id="game" className="flex-center grow">
+  //</div>
   return (
-      <div id="game" className="bg-dark-800 text-center text-slate-50 max-w-screen h-full flex-center flex-col grow">
-        <h1 className="text-7xl">{props.points}</h1>
+    <div id="game" className="bg-dark-800 text-center text-slate-50 flex-center flex-col grow aspect-[7/11] rounded-md mb-3">
+      <div className="h-[15%] w-full flex-center flex-col">
+        <h1 className="text-[5vh] w-full">{props.points}</h1>
         <GuessInput onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />
-        <ClueGrid onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
       </div>
+      <ClueGrid onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
+    </div>
   )
 }
 

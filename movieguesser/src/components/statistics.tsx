@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bar, BarChart, LabelList, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Dot, LabelList, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { curveCardinal } from "d3-shape";
 import useLockBodyScroll from "../hooks/useLockBodyScroll";
 import { addSyntheticTrailingComment } from "typescript";
@@ -22,7 +22,7 @@ const TimeToNewDay = () => {
     }, 1000)
     return () => clearInterval(i);
   })
-  return <span className="text-white text-xl">
+  return <span className="text-white text-2xl font-semibold">
     {timeLeft.hours.toString().padStart(2, "0")}:
     {timeLeft.minutes.toString().padStart(2, "0")}:
     {timeLeft.seconds.toString().padStart(2, "0")}
@@ -32,13 +32,15 @@ const TimeToNewDay = () => {
 const CustomizedDot = (props: any) => {
   const { cx, cy, stroke, payload, value } = props;
 
-  //if (payload.visible) {
-  if (false) {
+  const dotSize = 5;
+  if (payload.visible) {
+    //if (false) {
     return (
-      <svg x={cx - 4} y={cy - 4} width={8} height={8} fill="white">
-        <g transform="translate(4 4)">
-          <circle r="4" fill="black" />
-          <circle r="2" fill="white" />
+      //<g transform="translate(4 4)">
+      //</g>
+      <svg x={cx - dotSize} y={cy - dotSize} width={dotSize * 2} height={dotSize * 2} fill="white">
+        <g transform={`translate(${dotSize} ${dotSize})`}>
+          <circle r={`${dotSize}`} fill="green" />
         </g>
       </svg>
     );
@@ -97,11 +99,7 @@ const Statistics = (props: any) => {
     let minPoint = Math.max(0, stat.points - spread);
     let maxPoint = Math.min(110, stat.points + spread);
     for (let currPoint = minPoint; currPoint <= maxPoint; currPoint++) {
-      if (experimental) {
-        pointStats[currPoint]["numTimes"] += (Math.pow((spread - Math.abs(stat.points - currPoint)), 2));
-      } else {
-        pointStats[currPoint]["numTimes"] += f(currPoint, stat.points);
-      }
+      pointStats[currPoint]["numTimes"] += f(currPoint, stat.points);
     }
     //pointStats[stat.points]["numTimes"]++
   });
@@ -122,6 +120,7 @@ const Statistics = (props: any) => {
       props.onClose();
     }, 200)
   }
+  //<input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
   return <div id="statisticsBG"
     onClick={(e) => {
       if (e.target === e.currentTarget) {
@@ -132,7 +131,6 @@ const Statistics = (props: any) => {
   >
     <div id="statistics" className={`bg-dark-900 rounded-lg w-[30rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
       <div onClick={close} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
-      <input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
 
       <span className="text-white text-xl">
         Statistics
@@ -146,8 +144,8 @@ const Statistics = (props: any) => {
       <span className="text-white">
         Category distribution
       </span>
-      {experimental && <CategoryBarChart clueStats={clueStats} />}
-      {!experimental && <CategoryRadarChart clueStats={clueStats} />}
+      {true && <CategoryBarChart clueStats={clueStats} />}
+      {false && <CategoryRadarChart clueStats={clueStats} />}
 
 
       <span className="text-white">
@@ -155,12 +153,21 @@ const Statistics = (props: any) => {
       </span>
       <PointDistributionLineChart points={props.points} pointStats={pointStats} />
 
-      <div className="text-white">Next movie in </div><TimeToNewDay />
-      <div className="w-full h-2">&nbsp;</div>
+      <div className="w-full h-4">&nbsp;</div>
 
-      <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy result to clipboard</button>
-    </div>
-  </div>
+      <div className="w-full h-[100px]">
+        <div className="flex-center flex-col w-1/2 h-full float-left border-r-[1px]">
+          <div className="text-white">Next movie in </div>
+          <br />
+          <TimeToNewDay />
+        </div>
+
+        <div className="flex-center w-1/2 h-full border-l-[1px]">
+          <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy results</button>
+        </div>
+      </div>
+    </div >
+  </div >
 }
 
 const SimpleTextStats = (props: any) => {
@@ -202,6 +209,8 @@ const SimpleTextStats = (props: any) => {
   */
 }
 
+const animationDuration = 500;
+
 const CategoryRadarChart = (props: any) => (
   <ResponsiveContainer height={250}>
     <RadarChart outerRadius={90} data={props.clueStats}>
@@ -213,22 +222,23 @@ const CategoryRadarChart = (props: any) => (
 )
 
 const CategoryBarChart = (props: any) => (
-  <ResponsiveContainer height={250}>
+  <ResponsiveContainer height={230}>
     <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
       <XAxis type="number" axisLine={false} tick={false} />
       <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
-      <Bar dataKey="revealFrac" fill="green" minPointSize={15}>
+      <Bar dataKey="revealFrac" fill="green" minPointSize={15} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
         <LabelList dataKey="reveals" position="insideRight" fill="white" />
       </Bar>
     </BarChart>
   </ResponsiveContainer>)
 
+const strokeWidth = 2;
 const PointDistributionLineChart = (props: any) => (
   <ResponsiveContainer height={200}>
     <LineChart data={props.pointStats}>
       <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white" />
-      <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} />
-      <ReferenceLine x={props.points} stroke="green" />
+      <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
+      <ReferenceLine x={props.points} stroke="green" strokeWidth={strokeWidth} />
     </LineChart>
   </ResponsiveContainer>
 )

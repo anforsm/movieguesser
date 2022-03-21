@@ -155,7 +155,7 @@ code {
     "navbar "
     "game   "
   ;
-  grid-template-rows: 2rem 1fr;
+  grid-template-rows: clamp(1rem, 2.5vh, 2rem) 1fr;
   grid-template-columns: 1fr;
   grid-gap: 1rem;
 }
@@ -166,11 +166,12 @@ code {
 
 #navbar {
   grid-area: navbar;
+  font-size: clamp(0.8rem, 2vh, 1.8rem);
 }
 
 #clueTable {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 1%;
   grid-template:
     "title    title     title   "
     "poster   year      rating  "
@@ -200,9 +201,13 @@ code {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  #game {
+    aspect-ratio: initial;
+    width: 100%;
+    margin: initial;
+  }
+
 }
-
-
 
 #clueTable>div>div {
   overflow: hidden;
