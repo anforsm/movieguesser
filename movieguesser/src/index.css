@@ -35,7 +35,7 @@ code {
 
 .content {
   position: absolute;
-  transition: transform 0.3s;
+  transition-property: transform;
   transform-style: preserve-3d;
 }
 

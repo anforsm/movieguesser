@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { isPropertySignature } from "typescript";
 import { useLongPress } from "use-long-press";
 
@@ -13,12 +13,18 @@ interface ClueProps {
   value: any,
 }
 
+interface card {
+  swap: () => any,
+  flip: () => any,
+}
+
+const animationDuration = 300;
+
 const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals }: ClueProps) => {
-  const [flipSide, setFlipSide] = useState(false);
-  const [flipped, setFlipped] = useState(false);
-  const [animate, setAnimate] = useState(false);
-  const [deanimate, setDeanimate] = useState(false);
   const [showPointCost, setShowPointCost] = useState(false);
+  const [delayedReveals, setDelayedReveals] = useState(reveals);
+  const [initialFlip, setInitialFlip] = useState(reveals !== 0);
+
   let colors: Record<number, string>;
 
   const bind = useLongPress(() => {
@@ -40,14 +46,13 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
     colors[1] = "bg-clue-green";
   }
 
+  const flipCard = useRef<card>();
   const reveal = () => {
     if (reveals >= maxReveals)
       return;
-    setFlipSide(prevSide => !prevSide);
-    setTimeout(() => {
-      onReveal(reveals + 1)
-      setFlipped(flipped => !flipped)
-    }, 500);
+
+    flipCard.current?.swap();
+    onReveal(reveals + 1)
     //const newRevealed = revealed+1
     //setTimeout(() => onReveal(reveals + 1), 500);
     //setTimeout(() => setDeanimate(prevDeanimate => !prevDeanimate), 500);
@@ -57,18 +62,105 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
 
   }
 
+  useEffect(() => {
+    setTimeout(() => {
+      //flipCard.current?.flip();
+      setDelayedReveals(reveals);
+    }, animationDuration)
+  }, [reveals])
+
+  //<div className={`${showPointCost ? "flex" : "invisible"} pointCost absolute z-10 w-full h-full flex-center text-7xl ${reveals !== maxReveals ? "bg-zinc-500/40" : ""} `}>{pointCost[reveals]}</div>
   return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full `} onClick={reveal}>
-    <div className={`${showPointCost ? "flex" : "invisible"} pointCost absolute z-10 w-full h-full flex-center text-7xl ${reveals !== maxReveals ? "bg-zinc-500/40" : ""} `}>{pointCost[reveals]}</div>
-    <div className={`content w-full h-full ${flipSide ? "flip" : ""}`}>
+
+    <div className="w-full h-full">
+      <FlipCard ref={flipCard}
+        disabled={reveals >= maxReveals}
+        onFlipDone={() => {
+          if (!initialFlip) {
+            flipCard.current?.swap();
+          } else {
+            setInitialFlip(false);
+          }
+        }}
+        FrontSide={
+          //<span className=" bg-slate-800">Side One</span>
+          <div className={`w-full h-full ${colors[delayedReveals]}`}>
+            <Component value={value} reveal={delayedReveals} />
+          </div>
+
+        }
+        BackSide={
+          //<span className="bg-slate-800">Side Two</span>
+          // if not first flip (or no flip at all) and if we have another reveal, the backside should be the next reveal
+          !initialFlip && delayedReveals + 1 <= maxReveals ?
+            <div className={`w-full h-full ${colors[delayedReveals + 1]}`}>
+              <Component value={value} reveal={delayedReveals + 1} />
+            </div>
+            :
+            <div className={`w-full h-full ${colors[0]}`}>
+              <Component value={value} reveal={0} />
+            </div>
+
+        }
+        initialFlip={reveals > 0}
+        animationDuration={animationDuration} />
+    </div>
+    {/*
       <div className={`face one ${colors[flipped ? reveals + 1 : reveals]}`}>
         <Component value={value} reveal={flipped ? reveals + 1 : reveals} />
       </div>
+
       <div className={`face two overflow-hidden ${colors[flipped ? reveals : reveals + 1]}`}>
         <Component value={value} reveal={flipped ? reveals : reveals + 1} />
       </div>
-    </div>
+*/}
+
   </div>
 }
+
+const FlipCard = forwardRef((props: any, ref) => {
+  const [frontSide, setFrontSide] = useState(true);
+  const [currentSwap, setSwap] = useState(false);
+  const [initial, setInitial] = useState(false);
+  const flip = () => setFrontSide(side => !side);
+  const swap = () => setSwap(prevSwap => !prevSwap);
+  const flipNswap = () => { flip(); swap(); };
+
+  useImperativeHandle(ref, () => ({
+    swap: swap,
+    flip: flip,
+  }));
+
+  useEffect(() => {
+    if (initial) {
+      if (props.onFlipDone)
+        setTimeout(props.onFlipDone, props.animationDuration)
+    } else {
+      setInitial(true);
+    }
+  }, [frontSide])
+
+  useEffect(() => {
+    if (props.initialFlip)
+      flipNswap()
+  }, [])
+
+  return (
+    <div
+      onClick={() => !props.disabled && flipNswap()}
+      className={`content w-full h-full ${frontSide ? "" : "flip"} duration-300`}
+    >
+      <div className="face one">
+        {!currentSwap ? props.FrontSide : props.BackSide}
+      </div>
+
+      <div className="face two">
+        {!currentSwap ? props.BackSide : props.FrontSide}
+      </div>
+    </div>
+  )
+
+});
 
 
 

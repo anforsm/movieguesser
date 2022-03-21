@@ -4,6 +4,7 @@ module.exports = {
   content: [
     "./src/**/*{js,jsx,ts,tsx}"
   ],
+  mode: "jit",
   theme: {
     
     extend: {
@@ -21,8 +22,8 @@ module.exports = {
 
         clue: {
           gray: colors.slate["400"],
-          yellow: colors.yellow["400"],
-          green: colors.green["400"],
+          yellow: "#c9b458",
+          green: "#6aaa64",
         }
       },
     },
