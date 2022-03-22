@@ -10,6 +10,7 @@ interface gameState {
     rating: number;
     director: number;
     writer: number;
+    budget: number;
     quote: number;
     actor1: number;
     actor2: number;
@@ -31,6 +32,7 @@ const useGameState = (gameDay: number, movieTitle: string): readonly [gameState,
       rating: 0,
       director: 0,
       writer: 0,
+      budget: 0,
       quote: 0,
       actor1: 0,
       actor2: 0,

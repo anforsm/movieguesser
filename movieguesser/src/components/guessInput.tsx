@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import titles from "../titles";
 
@@ -14,6 +14,7 @@ const GuessInput = (props: any) => {
   const [inputFocused, setInputFocused] = useState(false);
   const [currentGuess, setCurrenGuess] = useState("")
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(-1);
+  const inputRef = useRef<any>();
   const onGuess = () => props.onGuess(currentGuess)
 
   useEffect(() => {
@@ -34,11 +35,12 @@ const GuessInput = (props: any) => {
     <div className="text-[1.5vh] w-full grow flex-center flex-col">
       <div onBlur={() => setInputFocused(false)} className="h-[2.5vh] relative w-full">
         <input
+          ref={inputRef}
           onFocus={() => setInputFocused(true)}
           onChange={e => setCurrenGuess(e.target.value)}
           onKeyDown={e => {
-            console.log("keydown");
             if (e.key === "Enter") {
+              inputRef.current.blur();
               onGuess();
             } else if (e.key === "Tab") {
               e.preventDefault();
@@ -48,8 +50,9 @@ const GuessInput = (props: any) => {
               } else {
                 setCurrentSuggestionIndex(prevIndex => (prevIndex + 1) % suggestions.length)
               }
-            } else {
-            }
+            } else if (e.key === "Escape") {
+              inputRef.current.blur();
+            } else { }
           }}
           onKeyUp={e => {
             // check if character key
@@ -88,9 +91,9 @@ const GuessInput = (props: any) => {
         }
       </div>
       <div className="h-[7%] w-full text-[0]">&nbsp;</div>
-      {props.win && <span>You win! Congratulations! Score: {props.score}/110</span>}
-      {!props.win && <span>{"❌".repeat(props.guesses) + "⬛".repeat(3 - props.guesses)}</span>}
-      {props.guesses == 3 && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+      {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
+      {/*!props.win && <span>{"❌".repeat(props.guesses) + "⬛".repeat(3 - props.guesses)}</span>*/}
+      {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
     </div >)
 }
 

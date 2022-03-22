@@ -9,7 +9,7 @@ const daysPassed = (date: Date) => {
 }
 let currentDay = daysPassed(new Date());
 
-const MAX_GUESSES = 3;
+const MAX_GUESSES = 1;
 
 const Game = (props: any) => {
   const makeGuess = (guess: string) => {

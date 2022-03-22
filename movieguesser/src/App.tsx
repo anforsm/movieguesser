@@ -14,6 +14,12 @@ const movies = oldmovies.map(movie => {
 })
 
 
+let latestNotification = `Introducing:
+* New point costs (out of a total of 100)
+* A new category
+* Second guess for poster
+* Only ONE guess allowed`
+
 const daysPassed = (date: Date) => {
   let current = new Date(date.getTime()).getTime();
   let previous = new Date(2022, 0, 1).getTime();
@@ -44,7 +50,7 @@ const generateShareString = (gameState: any, points: number) => `Movieguesser #$
 🇵:${clue2[gameState.poster]}
 🇷:${clue2[gameState.rating]}
 🇩:${clue2[gameState.director]}
-🇼:${clue2[gameState.writer]}
+🇧:${clue2[gameState.budget]}
 🇶:${clue2[gameState.quote]}
 🇦:${clue3[gameState.actor1]}${clue3[gameState.actor2]}${clue3[gameState.actor3]}
 `
@@ -62,6 +68,10 @@ function App() {
   const [showStats, setShowStats] = useState(false);
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
   const [newNotification, setNewNotification] = useState<string>();
+
+  useEffect(() => {
+    //notificationHandler.sendNotification(latestNotification, 10000);
+  }, [])
 
   return (
     <div id="app" className="bg-dark-900 min-h-screen max-h-screen h-full w-screen">
@@ -93,7 +103,7 @@ function App() {
               let history = gameHistory ? JSON.parse(gameHistory) : {};
               history[currentDay] = newGameState;
               localStorage.setItem("gameHistory", JSON.stringify(history))
-              setShowStats(true)
+              setTimeout(() => setShowStats(true), 2000)
             }
 
             setGameState(newGameState)

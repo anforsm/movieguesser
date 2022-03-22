@@ -175,7 +175,7 @@ code {
   grid-template:
     "title    title     title   "
     "poster   year      rating  "
-    "poster   director  writer  "
+    "poster   director  budget  "
     "quote    quote     quote   "
     "actor    actor     actor   "
   ;
@@ -192,7 +192,7 @@ code {
       "title    title   "
       "poster   poster  "
       "year     rating  "
-      "director writer  "
+      "director budget  "
       "quote    quote   "
       "actor    actor   "
       "actor    actor   "
@@ -236,6 +236,10 @@ code {
 
 .writer {
   grid-area: writer;
+}
+
+.budget {
+  grid-area: budget;
 }
 
 .quote {

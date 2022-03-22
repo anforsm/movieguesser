@@ -4,10 +4,11 @@ class NotificationHandler {
     this.observers = [];
   }
 
-  sendNotification(text: string) {
+  sendNotification(text: string, duration: number = 2000) {
     this.notifyObservers({
       type: "newNotification",
-      content: text
+      content: text,
+      duration: duration,
     });
   }
 

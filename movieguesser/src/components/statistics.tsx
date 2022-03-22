@@ -89,17 +89,18 @@ const Statistics = (props: any) => {
   clueStats = clueStats.map((clue: any) => ({ "clue": clue[0][0].toUpperCase() + clue[0].slice(1), "reveals": clue[1], "revealFrac": clue[1] / maxReveals }));
   let playedDays = Object.keys(props.stats).length;
   let pointStats: any[] = [];
-  for (let i = 0; i <= 110; i++) {
+  for (let i = 0; i <= 100; i++) {
     pointStats.push({ "points": i, "probability": 0, "numTimes": 0 })
   }
   const std = 4;
   const f = (x: number, mean: number) => Math.exp(-1 / 2 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
   Object.values(props.stats).forEach((stat: any) => {
+    let points = Math.min(stat.points, 100);
     const spread = 20;
-    let minPoint = Math.max(0, stat.points - spread);
-    let maxPoint = Math.min(110, stat.points + spread);
+    let minPoint = Math.max(0, points - spread);
+    let maxPoint = Math.min(100, points + spread);
     for (let currPoint = minPoint; currPoint <= maxPoint; currPoint++) {
-      pointStats[currPoint]["numTimes"] += f(currPoint, stat.points);
+      pointStats[currPoint]["numTimes"] += f(currPoint, points);
     }
     //pointStats[stat.points]["numTimes"]++
   });
@@ -236,7 +237,7 @@ const strokeWidth = 2;
 const PointDistributionLineChart = (props: any) => (
   <ResponsiveContainer height={200}>
     <LineChart data={props.pointStats}>
-      <XAxis dataKey="points" domain={[0, 110]} ticks={[10, 30, 50, 70, 90, 110]} fill="white" />
+      <XAxis dataKey="points" domain={[0, 110]} ticks={[0, 20, 40, 60, 80, 100]} fill="white" />
       <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
       <ReferenceLine x={props.points} stroke="green" strokeWidth={strokeWidth} />
     </LineChart>
