@@ -6,6 +6,11 @@ import Navbar from './components/navbar';
 import useGameState from './hooks/useGameState';
 import Notifications from './components/notification';
 import NotificationHandler from './models/notificationHandler';
+import Modal from './components/modal';
+import useModal from './hooks/useModal';
+import Settings from './components/settings';
+import Info from './components/info';
+import loadSettings from './utils/loadSettings';
 const movies = oldmovies.map(movie => {
   let newMovie: any = { ...movie }
   newMovie.poster = newMovie["image"];
@@ -64,8 +69,15 @@ const loadGameHistory = () => {
 
 const notificationHandler = new NotificationHandler()
 
+document.documentElement.classList.add("og");
+let settings = localStorage.getItem("settings");
+if (settings)
+  loadSettings(JSON.parse(settings))
+
 function App() {
-  const [showStats, setShowStats] = useState(false);
+  const [showStats, StatsModal] = useModal();
+  const [showSettings, SettingsModal] = useModal();
+  const [showInfo, InfoModal] = useModal();
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
   const [newNotification, setNewNotification] = useState<string>();
 
@@ -74,15 +86,35 @@ function App() {
   }, [])
 
   return (
-    <div id="app" className="bg-dark-900 min-h-screen max-h-screen h-full w-screen">
+    <div id="app" className="bg-primary-900 og:bg-og-900 min-h-screen max-h-screen h-full w-screen text-text-col">
       <Notifications notificationHandler={notificationHandler} />
       <Navbar
-        onStats={() => setShowStats(true)}
-        onInfo={() => notificationHandler.sendNotification("Tutorial coming soon...")}
-        onSettings={() => notificationHandler.sendNotification("Settings coming soon...")}
+        onStats={() => showStats(true)}
+        onInfo={() => showInfo(true)}
+        onSettings={() => showSettings(true)}
       />
 
-      {showStats &&
+      <SettingsModal>
+        <Settings />
+      </SettingsModal>
+
+      <StatsModal>
+        <Statistics
+          stats={loadGameHistory()}
+          points={gameState.points}
+          currentDay={currentDay}
+          onShare={() => {
+            navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))
+            notificationHandler.sendNotification("Copied results to clipboard")
+          }}
+        />
+      </StatsModal>
+
+      <InfoModal>
+        <Info />
+      </InfoModal>
+
+      {/*showStats &&
         <Statistics
           onClose={() => setShowStats(false)}
           stats={loadGameHistory()}
@@ -92,7 +124,7 @@ function App() {
             navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))
             notificationHandler.sendNotification("Copied results to clipboard")
           }}
-        />}
+        />*/}
 
       <div className="flex-center flex-col mb-2">
         <Game
@@ -103,7 +135,7 @@ function App() {
               let history = gameHistory ? JSON.parse(gameHistory) : {};
               history[currentDay] = newGameState;
               localStorage.setItem("gameHistory", JSON.stringify(history))
-              setTimeout(() => setShowStats(true), 2000)
+              setTimeout(() => showStats(true), 2000)
             }
 
             setGameState(newGameState)

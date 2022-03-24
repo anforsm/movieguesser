@@ -4,6 +4,7 @@ import { isPropertySignature } from "typescript";
 import { useLongPress } from "use-long-press";
 import useFirstRender from "../hooks/useFirstRender";
 import budgetFormatter from "../utils/budgetFormatter"
+import { AiOutlineQuestion } from "react-icons/ai";
 
 interface ClueProps {
   clue: string,
@@ -68,15 +69,9 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
     if (reveals >= maxReveals)
       return;
 
-    //flipCard.current?.swap();
-    onReveal(reveals + 1)
-    //const newRevealed = revealed+1
-    //setTimeout(() => onReveal(reveals + 1), 500);
-    //setTimeout(() => setDeanimate(prevDeanimate => !prevDeanimate), 500);
-    //setTimeout(() => setDeanimate(prevDeanimate => !prevDeanimate), 600);
-    //setAnimate(prevAnimate => !prevAnimate);
-    //setRevealed(revealed+1);
+    setShowPointCost(false);
 
+    onReveal(reveals + 1)
   }
 
   useEffect(() => {
@@ -119,8 +114,8 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   }, [delayedReveals])
 
 
-  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full `} onClick={reveal}>
-    <div className={`${showPointCost ? "flex" : "invisible"} pointCost absolute z-10 w-full h-full flex-center text-7xl ${reveals !== maxReveals ? "bg-zinc-500/40" : ""} pointer-events-none`}>{pointCost[reveals]}</div>
+  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50`} onClick={reveal}>
+    <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} flex absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{pointCost[reveals]}</div>
 
     <div className="w-full h-full">
       <FlipCard ref={flipCard}
@@ -288,42 +283,43 @@ const Title = ({ value, reveal }: ClueValProps) => {
   for (let i = 0; i < value.length; i++) {
     title += i % step == 0 ? value[i] : "_";
   }
-  return <div>
-    <span>Title</span>
+  return <div className="full flex flex-col">
+    <div className="label">Title</div>
     <br />
-    <span className={`text-3xl ${reveal >= 1 || 'hidden'}`}>{title}</span>
+    <div className="flex-center grow"><span className={`text-[2.3vh] ${reveal >= 1 || 'hidden'}`}>{title}</span></div>
   </div>
 }
 
 const Year = ({ value, reveal }: ClueValProps) => {
-  return <div>
-    <span>Release year</span>
+  // 6
+  return <div className="full flex flex-col">
+    <div className="label">Release year</div>
     <br />
-    {reveal >= 1 && <span className="text-7xl">{value}</span>}
+    {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
 const Poster = ({ value, reveal }: ClueValProps) => {
   return <div className="overflow-hidden h-full">
-    <span>Poster</span>
+    <div className="label">Poster</div>
     {reveal === 1 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[1vh] scale-125" src={value} /></div>}
     {reveal >= 2 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[0.5vh] scale-125" src={value} /></div>}
   </div>
 }
 
 const Rating = ({ value, reveal }: ClueValProps) => {
-  return <div>
-    <span>Rating</span>
+  return <div className="full flex flex-col">
+    <div className="label">Rating</div>
     <br />
-    {reveal >= 1 && <span className="text-7xl">{value}</span>}
+    {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
 const Director = ({ value, reveal }: ClueValProps) => {
-  return <div>
-    <span>Director</span>
+  return <div className="full flex flex-col">
+    <div className="label">Director</div>
     <br />
-    {reveal >= 1 && <span className="text-4xl">{value}</span>}
+    {reveal >= 1 && <div className="flex-center flex-col grow"><span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
@@ -337,29 +333,29 @@ const Writer = ({ value, reveal }: ClueValProps) => {
 
 const Budget = ({ value, reveal }: ClueValProps) => {
   let formattedBudget = budgetFormatter(value);
-  return <div className="w-full h-full">
-    <span>Budget</span>
+  return <div className="w-full h-full flex flex-col">
+    <div className="label">Budget</div>
     <br />
-    {reveal >= 1 && <div className="flex-center flex-col">
-      <span className="text-7xl inline-block">{formattedBudget.unit}{formattedBudget.number}</span>
-      <span className="text-4xl">{formattedBudget.suffix.toUpperCase()}</span>
+    {reveal >= 1 && <div className="flex-center flex-col grow">
+      <span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.unit}{formattedBudget.number}</span>
+      <span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix.toUpperCase()}</span>
     </div>}
   </div>
 }
 
 const Quote = ({ value, reveal }: ClueValProps) => {
-  return <div>
-    <span>Quote</span>
+  return <div className="bg-inherit">
+    <div className="label">Quote</div>
     <br />
-    {reveal >= 1 && <span className="text-4xl italic">"{value}"</span>}
+    {reveal >= 1 && <span className="text-[2.7vh] italic">"{value}"</span>}
   </div>
 }
 
 const Actor = (props: any) => {
-  return <div className="overflow-hidden h-full">
-    {props.reveal == 0 && <span>Actor</span>}
-    {props.reveal >= 1 && <span className="text-xl">{props.value.name}</span>}
-    {props.reveal == 1 && <div className=" h-full flex-center"><span className="text-xl">Show image</span></div>}
+  return <div className="overflow-hidden full flex items-center flex-col">
+    {props.reveal == 0 && <div className="label">Actor</div>}
+    {props.reveal >= 1 && <span className="label">{props.value.name}</span>}
+    {props.reveal == 1 && <div className="flex-center grow"><span className="text-[10vh]">?</span></div>}
     {props.reveal >= 2 && <img className="h-full w-full object-cover" src={props.value.image} />}
   </div>
 }

@@ -13,8 +13,8 @@ const addClue = (clueName: string, component: any, pointCost: number[], id: numb
   }
 };
 
-addClue("title", Title, [10, 15])
-addClue("poster", Poster, [10, 15])
+addClue("title", Title, [10, 20])
+addClue("poster", Poster, [10, 10])
 addClue("year", Year, [2])
 addClue("rating", Rating, [1])
 addClue("director", Director, [3])

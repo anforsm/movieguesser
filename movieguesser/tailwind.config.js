@@ -5,25 +5,26 @@ module.exports = {
     "./src/**/*{js,jsx,ts,tsx}"
   ],
   mode: "jit",
+  dark: "class",
+  blue: "class",
+  light: "class",
   theme: {
     
     extend: {
       colors: {
-        dark: {
-          600: colors.slate["600"],
-          700: colors.slate["700"],
-          800: colors.slate["800"],
-          900: colors.slate["900"],
+        primary: {
+          600: "var(--primary-600)",
+          700: "var(--primary-700)",
+          800: "var(--primary-800)",
+          900: "var(--primary-900)",
         },
 
-        light: {
-
-        },
+        "text-col": "var(--text-col)",
 
         clue: {
-          gray: colors.slate["400"],
-          yellow: "#c9b458",
-          green: "#6aaa64",
+          gray: "var(--clue-gray)",
+          yellow: "var(--clue-yellow)",
+          green: "var(--clue-green)",
         }
       },
     },

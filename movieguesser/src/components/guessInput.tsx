@@ -66,7 +66,7 @@ const GuessInput = (props: any) => {
         />
 
         <button
-          className="bg-dark-600 h-full aspect-[1.3/1] absolute top-0 right-[30%]"
+          className="bg-primary-600 h-full aspect-[1.3/1] absolute top-0 right-[30%]"
           onClick={onGuess}
         >
           &gt;
@@ -74,7 +74,7 @@ const GuessInput = (props: any) => {
 
         {inputFocused &&
           <ul
-            className="absolute bg-black opacity-90 w-full z-10 text-[1.3vh] top-[2.5vh]"
+            className="absolute bg-black opacity-90 w-full z-10 text-[1.3vh] top-[2.5vh] text-slate-50"
           >
             {suggestions.map((title, i) =>
               <li

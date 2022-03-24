@@ -122,6 +122,7 @@ const Statistics = (props: any) => {
     }, 200)
   }
   //<input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
+  /*
   return <div id="statisticsBG"
     onClick={(e) => {
       if (e.target === e.currentTarget) {
@@ -131,44 +132,48 @@ const Statistics = (props: any) => {
     className={`absolute w-screen h-screen bg-black/50 flex-center top-0 z-20 ${closing ? "closing" : ""}`}
   >
     <div id="statistics" className={`bg-dark-900 rounded-lg w-[30rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
-      <div onClick={close} className="absolute right-0 top-0 cursor-pointer mr-3 my-1 text-xl">x</div>
+    */
+  return <>
 
-      <span className="text-white text-xl">
-        Statistics
-      </span>
-      <div className="w-full h-4">&nbsp;</div>
+    <span className="text-white text-xl">
+      Statistics
+    </span>
+    <div className="w-full h-4">&nbsp;</div>
 
-      <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
+    <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
 
-      <div className="w-full h-4">&nbsp;</div>
+    <div className="w-full h-4">&nbsp;</div>
 
-      <span className="text-white">
-        Category distribution
-      </span>
-      {true && <CategoryBarChart clueStats={clueStats} />}
-      {false && <CategoryRadarChart clueStats={clueStats} />}
+    <span className="text-white">
+      Category distribution
+    </span>
+    {true && <CategoryBarChart clueStats={clueStats} />}
+    {false && <CategoryRadarChart clueStats={clueStats} />}
 
 
-      <span className="text-white">
-        Point distribution
-      </span>
-      <PointDistributionLineChart points={props.points} pointStats={pointStats} />
+    <span className="text-white">
+      Point distribution
+    </span>
+    <PointDistributionLineChart points={props.points} pointStats={pointStats} />
 
-      <div className="w-full h-4">&nbsp;</div>
+    <div className="w-full h-4">&nbsp;</div>
 
-      <div className="w-full h-[100px]">
-        <div className="flex-center flex-col w-1/2 h-full float-left border-r-[1px]">
-          <div className="text-white">Next movie in </div>
-          <br />
-          <TimeToNewDay />
-        </div>
-
-        <div className="flex-center w-1/2 h-full border-l-[1px]">
-          <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy results</button>
-        </div>
+    <div className="w-full h-[100px]">
+      <div className="flex-center flex-col w-1/2 h-full float-left border-r-[1px]">
+        <div className="text-white">Next movie in </div>
+        <br />
+        <TimeToNewDay />
       </div>
-    </div >
-  </div >
+
+      <div className="flex-center w-1/2 h-full border-l-[1px]">
+        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy results</button>
+      </div>
+    </div>
+  </>
+  /*
+</div >
+</div >
+*/
 }
 
 const SimpleTextStats = (props: any) => {
@@ -180,7 +185,7 @@ const SimpleTextStats = (props: any) => {
   addStat("Current Streak", props.currentStreak);
   return <div className="w-full flex">
     {stats.map((stat: any) =>
-      <div key={stat.label} className="flex-1 border-white m-2 p-1 rounded-md flex-center flex-col bg-dark-700">
+      <div key={stat.label} className="flex-1 border-white m-2 p-1 rounded-md flex-center flex-col bg-primary-700">
         <div className="text-2xl font-bold">{stat.value}</div>
         <div className="text-xs">{stat.label}</div>
       </div>)}

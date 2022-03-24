@@ -2,15 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --clue-gray: theme("colors.zinc[600]");
+    --clue-yellow: #c9b458;
+    --clue-green: #6aaa64;
+
+    --text-col: theme("colors.slate[50]");
+  }
+
+  .og {
+    --primary-600: theme("colors.slate[600]");
+    --primary-700: theme("colors.slate[700]");
+    --primary-800: theme("colors.slate[800]");
+    --primary-900: theme("colors.slate[900]");
+
+    --clue-gray: theme("colors.slate[600]");
+
+  }
+
+  .dark {
+    --primary-600: theme("colors.neutral[600]");
+    --primary-700: theme("colors.neutral[700]");
+    --primary-800: theme("colors.neutral[800]");
+    --primary-900: theme("colors.neutral[900]");
+  }
+
+  .light {
+    --primary-600: theme("colors.slate[300]");
+    --primary-700: theme("colors.slate[200]");
+    --primary-800: theme("colors.slate[100]");
+    --primary-900: theme("colors.slate[50]");
+
+    --text-col: theme("colors.slate[900]");
+  }
+}
+
 @layer utilities {
   .flex-center {
     @apply flex justify-center items-center
+  }
+
+  .full {
+    @apply h-full w-full
   }
 }
 
 @layer components {
   .clue {
     @apply rounded-sm cursor-pointer overflow-y-auto
+  }
+
+  .label {
+    @apply bg-black/70 w-full text-[1.5vh] flex-center
   }
 }
 
@@ -98,19 +142,19 @@ code {
   }
 }
 
-#statistics {
+#modal {
   animation: slideIn 200ms;
 }
 
-#statistics.closing {
+#modal.closing {
   animation: slideOut 200ms !important;
 }
 
-#statisticsBG {
+#modalBG {
   animation: slideInBG 200ms;
 }
 
-#statisticsBG.closing {
+#modalBG.closing {
   animation: slideOutBG 200ms !important;
 }
 
@@ -149,13 +193,43 @@ code {
   animation: slideOutNT 100ms !important;
 }
 
+@keyframes pointCostBGIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pointCostBGOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.pointCostShow {
+  opacity: 1;
+  animation: pointCostBGIn 50ms ease forwards;
+}
+
+.pointCostHide {
+  opacity: 0;
+  animation: pointCostBGOut 50ms ease forwards;
+}
+
 #app {
   display: grid;
   grid-template:
     "navbar "
     "game   "
   ;
-  grid-template-rows: clamp(1rem, 2.5vh, 2rem) 1fr;
+  grid-template-rows: 3.5vh 1fr;
   grid-template-columns: 1fr;
   grid-gap: 1rem;
 }
@@ -166,7 +240,6 @@ code {
 
 #navbar {
   grid-area: navbar;
-  font-size: clamp(0.8rem, 2vh, 1.8rem);
 }
 
 #clueTable {
@@ -197,7 +270,7 @@ code {
       "actor    actor   "
       "actor    actor   "
     ;
-    grid-template-rows: 7rem 38rem 7rem 7rem 10rem 19rem 19rem;
+    grid-template-rows: 7rem 38rem 7rem 10rem 10rem 19rem 19rem;
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -210,7 +283,6 @@ code {
 }
 
 #clueTable>div>div {
-  overflow: hidden;
   min-width: 0;
 }
 
