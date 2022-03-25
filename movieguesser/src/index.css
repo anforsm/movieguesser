@@ -50,12 +50,16 @@
 
 @layer components {
   .clue {
-    @apply rounded-sm cursor-pointer overflow-y-auto
+    @apply rounded-[1.2vh] cursor-pointer overflow-y-auto
   }
 
   .label {
-    @apply bg-black/70 w-full text-[1.5vh] flex-center
+    @apply bg-black/40 w-full text-[1.5vh] flex-center
   }
+}
+
+.content>div>div {
+  border-radius: 1.2vh;
 }
 
 body {
@@ -66,6 +70,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  user-select: none;
 }
 
 code {
@@ -213,6 +218,15 @@ code {
   }
 }
 
+.close-button {
+  transition: transform 200ms ease-in-out;
+}
+
+.close-button:hover {
+  transform: scale(1.1);
+}
+
+
 .pointCostShow {
   opacity: 1;
   animation: pointCostBGIn 50ms ease forwards;
@@ -244,7 +258,7 @@ code {
 
 #clueTable {
   display: grid;
-  grid-gap: 1%;
+  grid-gap: 1.2vh;
   grid-template:
     "title    title     title   "
     "poster   year      rating  "

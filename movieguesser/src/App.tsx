@@ -52,7 +52,7 @@ const clue3 = ["⬛", "🟨", "🟩"];
 const generateShareString = (gameState: any, points: number) => `Movieguesser #${currentDay} (${points}/100)
 🇹:${clue3[gameState.title]}
 🇾:${clue2[gameState.year]}
-🇵:${clue2[gameState.poster]}
+🇵:${clue3[gameState.poster]}
 🇷:${clue2[gameState.rating]}
 🇩:${clue2[gameState.director]}
 🇧:${clue2[gameState.budget]}
@@ -141,6 +141,7 @@ function App() {
             setGameState(newGameState)
           }}
           movieInfo={movie}
+          DEV={DEV}
         />
       </div>
       {DEV && <button className="bg-white" onClick={() => { localStorage.removeItem("gameState"); window.location.reload() }}>Reset day</button>}

@@ -115,7 +115,7 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
 
 
   return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50`} onClick={reveal}>
-    <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} flex absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{pointCost[reveals]}</div>
+    <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{pointCost[reveals]}</div>
 
     <div className="w-full h-full">
       <FlipCard ref={flipCard}
@@ -300,7 +300,7 @@ const Year = ({ value, reveal }: ClueValProps) => {
 }
 
 const Poster = ({ value, reveal }: ClueValProps) => {
-  return <div className="overflow-hidden h-full">
+  return <div className="overflow-hidden h-full rounded-[1.2vh]">
     <div className="label">Poster</div>
     {reveal === 1 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[1vh] scale-125" src={value} /></div>}
     {reveal >= 2 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[0.5vh] scale-125" src={value} /></div>}
@@ -352,7 +352,7 @@ const Quote = ({ value, reveal }: ClueValProps) => {
 }
 
 const Actor = (props: any) => {
-  return <div className="overflow-hidden full flex items-center flex-col">
+  return <div className="overflow-hidden full flex items-center flex-col rounded-[1.2vh]">
     {props.reveal == 0 && <div className="label">Actor</div>}
     {props.reveal >= 1 && <span className="label">{props.value.name}</span>}
     {props.reveal == 1 && <div className="flex-center grow"><span className="text-[10vh]">?</span></div>}

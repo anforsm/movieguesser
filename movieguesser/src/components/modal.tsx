@@ -21,7 +21,7 @@ const Modal = (props: any) => {
     className={`absolute w-screen h-screen bg-black/50 flex-center top-0 z-20 ${closing ? "closing" : ""}`}
   >
     <div id="modal" className={`bg-primary-900 rounded-lg w-[30rem] flex flex-col items-center p-8 relative ${closing ? "closing" : ""}`}>
-      <div onClick={close} className="absolute right-0 top-0 cursor-pointer mr-2 my-2 text-xl"><IoMdCloseCircleOutline /></div>
+      <div onClick={close} className="close-button absolute right-0 top-0 cursor-pointer mr-2 my-2 text-xl"><IoMdCloseCircleOutline /></div>
       {props.children}
     </div>
   </div>
