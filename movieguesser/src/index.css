@@ -46,15 +46,19 @@
   .full {
     @apply h-full w-full
   }
+
+  .black-shadow {
+    @apply shadow-lg
+  }
 }
 
 @layer components {
   .clue {
-    @apply rounded-[1.2vh] cursor-pointer overflow-y-auto
+    @apply rounded-[1.2vh] overflow-y-auto
   }
 
   .label {
-    @apply bg-black/40 w-full text-[1.5vh] flex-center
+    @apply bg-black/40 w-full text-[1rem] md:text-[1.5vh] flex-center
   }
 }
 
@@ -76,6 +80,32 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button, select, input {
+  border-radius: 0.375rem;
+  background-color: var(--primary-700);
+  transition: background-color 150ms ease-in-out;
+}
+
+button:hover {
+  background-color: var(--primary-600);
+}
+
+select option:hover {
+  box-shadow: 0 0 10px 100px red inset;
+}
+
+a {
+  text-decoration: underline;
+}
+
+.toggle > .switch {
+  transition: all 100ms ease-out;
+}
+
+.toggle .toggle--background {
+  transition: all 100ms ease-out;
 }
 
 .clue {
@@ -218,11 +248,11 @@ code {
   }
 }
 
-.close-button {
-  transition: transform 200ms ease-in-out;
+.close-button, .enlarge-button {
+  transition: transform 200ms ease-out;
 }
 
-.close-button:hover {
+.close-button:hover, .enlarge-button:hover {
   transform: scale(1.1);
 }
 
@@ -243,9 +273,9 @@ code {
     "navbar "
     "game   "
   ;
-  grid-template-rows: 3.5vh 1fr;
+  grid-template-rows: 44px 1fr;
   grid-template-columns: 1fr;
-  grid-gap: 1rem;
+  grid-gap: 1vh;
 }
 
 #game {
@@ -270,7 +300,7 @@ code {
   grid-template-columns: repeat(3, 1fr);
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 768px) {
   #clueTable {
     flex-grow: 1;
     display: grid;

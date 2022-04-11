@@ -5,7 +5,7 @@ import { useState } from "react";
 const Navbar = (props: any) => {
   const [col, setCol] = useState(0);
 
-  return <nav id="navbar" className="w-screen h-full bg-primary-800 flex-center m-0 text-[3vh]">
+  return <nav id="navbar" className="w-screen h-full bg-primary-800 flex-center m-0 text-[3vh] z-10 shadow-md">
     <div className="w-[100vw] max-w-[60vh] h-full flex flex-row items-center relative px-4">
 
       <div onClick={props.onInfo} className="float-left cursor-pointer mr-auto h-full flex-center">

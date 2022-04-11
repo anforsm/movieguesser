@@ -2,6 +2,8 @@ import shutil
 import requests
 import json
 from firebase_admin import credentials, initialize_app, storage
+from os.path import exists
+from blur_movie_poster import create_blurred_versions
 
 
 TRAKT_BASE_URL = "https://api.trakt.tv/"
@@ -18,17 +20,36 @@ initialize_app(cred, {"storageBucket": "movieguesser-4997e.appspot.com"})
 bucket = storage.bucket("movieguesser-4997e.appspot.com")
 
 
-def main():
-    imdbID = "tt0469494"
-    # get_movie_info(imdbID)
-    # get_cast(imdbID)
-    #actorID = "11856"
-    # get_cast_image(actorID)
-    #images = get_images_for_movie(imdbID)
-    #filenames = [download_image(actor["image"]) for actor in images["actors"]]
+# check there will be blood and matrix revolutions
 
-    print(update_actors_poster_backdrop(imdbID))
-    # print(get_movie_poster_and_backdrop(imdbID))
+def main():
+    with open("shuffled_titles.json", "r") as f:
+        allMovies = json.load(f)
+    for movie in allMovies:
+        poster_medium_path, poster_large_path = create_blurred_versions(
+            movie["imdbID"])
+        upload_image(poster_medium_path)
+        upload_image(poster_large_path)
+
+
+def get_actor_backdrop_poster():
+    with open("shuffled_titles.json", "r") as f:
+        allMovies = json.load(f)
+    i = 0
+    for movie in allMovies:
+        print(f"{movie['title']}: {i}/{len(allMovies)}")
+        print()
+        i += 1
+        # if (exists("posters/"+movie["imdbID"]+".jpg")):
+        # continue
+        imdbID = movie["imdbID"]
+        poster, backdrop, actors = update_actors_poster_backdrop(imdbID)
+        movie["poster"] = poster
+        movie["backdrop"] = backdrop
+        movie["actors"] = actors
+        del movie["image"]
+    with open("shuffled_titles.json", "w") as f:
+        f.write(json.dumps(allMovies))
 
 
 def update_actors_poster_backdrop(imdbID):
@@ -40,8 +61,11 @@ def update_actors_poster_backdrop(imdbID):
 
     new_actors = []
     for actor in actors:
-        filename = download_image_actor(actor)
-        image_url = upload_image(f"actors/{filename}")
+        if not actor["image"] == "":
+            filename = download_image_actor(actor)
+            image_url = upload_image(f"actors/{filename}")
+        else:
+            image_url = ""
         new_actors.append({
             "name": actor["name"],
             "imdbID": actor["imdbID"],
@@ -131,6 +155,9 @@ def get_cast(imdbID):
 def get_cast_image(tmdbID):
     person_info = requests.get(
         f"{TMDB_BASE_URL}person/{tmdbID}", params={"api_key": apiConfig["tmdb"]["apiKey"]}).json()
+    if person_info["profile_path"] is None:
+        print("could not find image for ", tmdbID)
+        return ""
     image = "https://image.tmdb.org/t/p/w500" + person_info["profile_path"]
     return image
 

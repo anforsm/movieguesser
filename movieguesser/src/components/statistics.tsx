@@ -22,7 +22,7 @@ const TimeToNewDay = () => {
     }, 1000)
     return () => clearInterval(i);
   })
-  return <span className="text-white text-2xl font-semibold">
+  return <span className="text-2xl font-semibold">
     {timeLeft.hours.toString().padStart(2, "0")}:
     {timeLeft.minutes.toString().padStart(2, "0")}:
     {timeLeft.seconds.toString().padStart(2, "0")}
@@ -95,7 +95,7 @@ const Statistics = (props: any) => {
   const std = 4;
   const f = (x: number, mean: number) => Math.exp(-1 / 2 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
   Object.values(props.stats).forEach((stat: any) => {
-    let points = Math.min(stat.points, 100);
+    let points = 100 - Math.min(stat.points, 100);
     const spread = 20;
     let minPoint = Math.max(0, points - spread);
     let maxPoint = Math.min(100, points + spread);
@@ -113,14 +113,6 @@ const Statistics = (props: any) => {
     "visible": currPoint.points === props.points
   }));
 
-  const [closing, setClosing] = useState(false);
-  const close = () => {
-    setClosing(true);
-    setTimeout(() => {
-      setClosing(false);
-      props.onClose();
-    }, 200)
-  }
   //<input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
   /*
   return <div id="statisticsBG"
@@ -135,7 +127,7 @@ const Statistics = (props: any) => {
     */
   return <>
 
-    <span className="text-white text-xl">
+    <span className="text-xl">
       Statistics
     </span>
     <div className="w-full h-4">&nbsp;</div>
@@ -144,14 +136,14 @@ const Statistics = (props: any) => {
 
     <div className="w-full h-4">&nbsp;</div>
 
-    <span className="text-white">
+    <span className="">
       Category distribution
     </span>
     {true && <CategoryBarChart clueStats={clueStats} />}
     {false && <CategoryRadarChart clueStats={clueStats} />}
 
 
-    <span className="text-white">
+    <span className="">
       Point distribution
     </span>
     <PointDistributionLineChart points={props.points} pointStats={pointStats} />
@@ -159,14 +151,14 @@ const Statistics = (props: any) => {
     <div className="w-full h-4">&nbsp;</div>
 
     <div className="w-full h-[100px]">
-      <div className="flex-center flex-col w-1/2 h-full float-left border-r-[1px]">
-        <div className="text-white">Next movie in </div>
+      <div className="flex-center flex-col w-1/2 h-full float-left border-r-[1px] border-text-col">
+        <div className="">Next movie in </div>
         <br />
         <TimeToNewDay />
       </div>
 
-      <div className="flex-center w-1/2 h-full border-l-[1px]">
-        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md">Copy results</button>
+      <div className="flex-center w-1/2 h-full border-l-[1px] border-text-col">
+        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md text-white">Copy results</button>
       </div>
     </div>
   </>
@@ -185,7 +177,7 @@ const SimpleTextStats = (props: any) => {
   addStat("Current Streak", props.currentStreak);
   return <div className="w-full flex">
     {stats.map((stat: any) =>
-      <div key={stat.label} className="flex-1 border-white m-2 p-1 rounded-md flex-center flex-col bg-primary-700">
+      <div key={stat.label} className="flex-1 shadow-md m-2 p-1 rounded-md flex-center flex-col bg-primary-700">
         <div className="text-2xl font-bold">{stat.value}</div>
         <div className="text-xs">{stat.label}</div>
       </div>)}
@@ -215,7 +207,7 @@ const SimpleTextStats = (props: any) => {
   */
 }
 
-const animationDuration = 500;
+const animationDuration = 0;
 
 const CategoryRadarChart = (props: any) => (
   <ResponsiveContainer height={250}>
@@ -231,7 +223,7 @@ const CategoryBarChart = (props: any) => (
   <ResponsiveContainer height={230}>
     <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
       <XAxis type="number" axisLine={false} tick={false} />
-      <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "white" }} />
+      <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "var(--text-col)" }} />
       <Bar dataKey="revealFrac" fill="green" minPointSize={15} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
         <LabelList dataKey="reveals" position="insideRight" fill="white" />
       </Bar>
@@ -243,7 +235,7 @@ const PointDistributionLineChart = (props: any) => (
   <ResponsiveContainer height={200}>
     <LineChart data={props.pointStats}>
       <XAxis dataKey="points" domain={[0, 110]} ticks={[0, 20, 40, 60, 80, 100]} fill="white" />
-      <Line type="basis" dataKey="probability" stroke="white" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
+      <Line type="basis" dataKey="probability" stroke="var(--text-col)" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
       <ReferenceLine x={props.points} stroke="green" strokeWidth={strokeWidth} />
     </LineChart>
   </ResponsiveContainer>

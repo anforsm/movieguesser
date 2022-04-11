@@ -1,7 +1,17 @@
 import { Actor, Director, Poster, Quote, Rating, Title, Writer, Budget, Year } from "./components/clue";
 
 let clueSpecification: any = {};
-const addClue = (clueName: string, component: any, pointCost: number[], id: number = -1) => {
+const addClue = (clueName: string, component: any, pointCost: number[], id: number = -1, value: string = "") => {
+  if (value === "") {
+    if (id === -1) {
+      value = clueName;
+    } else {
+      value = clueName + "s";
+    }
+  } else {
+    value = value;
+  }
+  value = value === "" ? clueName : value;
   let clueId = id === -1 ? clueName : clueName + id.toString();
   clueSpecification[clueId] = {
     clue: clueName,
@@ -10,11 +20,12 @@ const addClue = (clueName: string, component: any, pointCost: number[], id: numb
     maxReveals: pointCost.length,
     pointCost: pointCost,
     Component: component,
+    value: value,
   }
 };
 
 addClue("title", Title, [10, 20])
-addClue("poster", Poster, [10, 10])
+addClue("poster", Poster, [10, 10], -1, "imdbID")
 addClue("year", Year, [2])
 addClue("rating", Rating, [1])
 addClue("director", Director, [3])

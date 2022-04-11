@@ -5,16 +5,20 @@ import titles from "../titles";
 
 const mod = (n: number, m: number) => ((n % m) + m) % m;
 
-const getTitleMatches = (inputTitle: string) =>
+const charactesToShowSuggestion = 0;
+
+const getTitleMatches = (inputTitle: string) => inputTitle.length > charactesToShowSuggestion ?
   titles.filter(title =>
     title.toLowerCase().includes(inputTitle.toLocaleLowerCase())
-  ).slice(0, 5);
+  ).sort().slice(0, 3) : [];
+
 
 const GuessInputLine = (props: any) => {
   const [suggestions, setSuggestions] = useState<string[]>(getTitleMatches(""));
   const [inputFocused, setInputFocused] = useState(false);
   const [currentGuess, setCurrenGuess] = useState("")
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(-1);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<any>();
   const onGuess = () => props.onGuess(currentGuess)
 
@@ -22,19 +26,32 @@ const GuessInputLine = (props: any) => {
   }, [currentGuess])
 
   useEffect(() => {
-    if (currentSuggestionIndex === -1) return;
-    if (currentSuggestionIndex >= suggestions.length) return;
-
-    setCurrenGuess(suggestions[currentSuggestionIndex]);
   }, [currentSuggestionIndex])
+
+  useEffect(() => {
+    if (!inputFocused)
+      setShowSuggestions(false);
+
+    if (inputFocused) {
+      if (currentGuess.length > charactesToShowSuggestion) {
+        setShowSuggestions(true);
+      } else {
+        setShowSuggestions(false);
+      }
+    }
+  }, [inputFocused, currentGuess])
 
   useEffect(() => {
     setCurrentSuggestionIndex(-1);
   }, [inputFocused])
 
   return (
-    <div className="text-[5vh] w-full grow flex-center flex-col">
-      <div onBlur={() => setInputFocused(false)} className="h-[5.2vh] relative w-full">
+    <div className="w-full grow flex-center flex-col pb-4 md:pb-[0.5vh] text-[1.5rem] md:text-[2vh]">
+      {props.guesses == 0 && <span>&nbsp;</span>}
+      {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
+      {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+      <div className="h-[7%] w-full text-[0]">&nbsp;</div>
+      <div onBlur={() => setInputFocused(false)} className="h-12 md:h-[3.2vh] relative flex items-center w-[96%]">
         <input
           ref={inputRef}
           onFocus={() => setInputFocused(true)}
@@ -45,37 +62,38 @@ const GuessInputLine = (props: any) => {
               onGuess();
             } else if (e.key === "Tab") {
               e.preventDefault();
+              if (suggestions.length === 0) return;
+              let newSuggestionIndex;
               if (e.getModifierState("Shift")) {
                 // better modulo to handle negative numbers
-                setCurrentSuggestionIndex(prevIndex => mod(prevIndex - 1, suggestions.length))
+                newSuggestionIndex = mod(currentSuggestionIndex - 1, suggestions.length)
               } else {
-                setCurrentSuggestionIndex(prevIndex => (prevIndex + 1) % suggestions.length)
+                newSuggestionIndex = (currentSuggestionIndex + 1) % suggestions.length
               }
+              setCurrentSuggestionIndex(newSuggestionIndex);
+              setCurrenGuess(suggestions[newSuggestionIndex]);
             } else if (e.key === "Escape") {
               inputRef.current.blur();
             } else { }
-          }}
-          onKeyUp={e => {
-            // check if character key
             if (!(e.key.length === 1 || (e.key.length > 1 && /[^a-zA-Z0-9]/.test(e.key)) || e.key === "Spacebar" || e.key === "Backspace")) return
             setCurrentSuggestionIndex(-1);
             setSuggestions(getTitleMatches(currentGuess))
           }}
           value={currentGuess}
-          className="bg-transparent border-b border-b-blue-700 h-full w-[96%] absolute top-0 -translate-x-1/2 indent-1 focus:outline-none"
+          className="px-[0.6vh] mr-[0.6vh] h-full indent-1 focus:outline-none grow"
           placeholder="Guess..."
         />
 
         <button
-          className="h-full flex-center text-[2.5vh] aspect-[0.2/1] absolute top-0 right-[2%] border-0 border-white"
+          className="h-full flex-center aspect-[1.3/1] top-0 border-0 border-white"
           onClick={onGuess}
         >
           <AiOutlineArrowRight />
         </button>
 
-        {inputFocused &&
+        {showSuggestions &&
           <ul
-            className="absolute bg-black opacity-90 w-full z-10 text-[1.3vh] top-[5.2vh] text-slate-50"
+            className="absolute bg-primary-700 left-0 w-[100%] md:w-[92%] rounded-md z-10 text-left top-[3.5rem] md:top-[3.8vh] overflow-y-hidden"
           >
             {suggestions.map((title, i) =>
               <li
@@ -84,17 +102,15 @@ const GuessInputLine = (props: any) => {
                   setSuggestions(getTitleMatches(title))
                   setCurrenGuess(title)
                 }}
-                className={`cursor-pointer ${i == currentSuggestionIndex ? "outline outline-2 outline-zinc-400" : ""}`}
+                onMouseEnter={() => setCurrentSuggestionIndex(i)}
+                className={`cursor-pointer ${i == currentSuggestionIndex ? "bg-primary-600" : ""} border-b border-b-primary-800 pl-[calc(0.25rem+0.6vh)]`}
               >
                 {title}
               </li>)}
           </ul>
         }
       </div>
-      <div className="h-[7%] w-full text-[0]">&nbsp;</div>
-      {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
-      {/*!props.win && <span>{"❌".repeat(props.guesses) + "⬛".repeat(3 - props.guesses)}</span>*/}
-      {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+      {/*<div className="h-[7%] w-full text-[0]">&nbsp;</div>*/}
     </div >)
 }
 

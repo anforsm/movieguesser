@@ -35,7 +35,7 @@ const Notification = (props: any) => {
     setTimeout(() => setVisible(false), 1600);
   })
   */
-  return <div className={`notification w-3/4 bg-slate-50 p-4 m-2 rounded-md ${false ? "closing" : ""} ${true ? "" : "invisible"}`}>
+  return <div className={`notification w-3/4 bg-text-col text-primary-900 p-4 m-2 rounded-md ${false ? "closing" : ""} ${true ? "" : "invisible"}`}>
     {props.content}
   </div>
 }

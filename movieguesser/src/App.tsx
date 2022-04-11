@@ -11,12 +11,16 @@ import useModal from './hooks/useModal';
 import Settings from './components/settings';
 import Info from './components/info';
 import loadSettings from './utils/loadSettings';
+import moment from 'moment';
+/*
 const movies = oldmovies.map(movie => {
   let newMovie: any = { ...movie }
   newMovie.poster = newMovie["image"];
   delete newMovie.image
   return newMovie;
 })
+*/
+const movies = oldmovies;
 
 
 let latestNotification = `Introducing:
@@ -26,11 +30,13 @@ let latestNotification = `Introducing:
 * Only ONE guess allowed`
 
 const daysPassed = (date: Date) => {
-  let current = new Date(date.getTime()).getTime();
-  let previous = new Date(2022, 0, 1).getTime();
-  return Math.floor((current - previous) / 8.64e7);
+  //let current = new Date(date.getTime()).getTime();
+  //let previous = new Date(2022, 0, 1).getTime();
+  //return Math.floor((current - previous) / 8.64e7);
+  return -moment([2022, 0, 1]).diff(date, "days");
 }
 let currentDay = daysPassed(new Date());
+console.log(currentDay)
 let movie: any = movies[currentDay % movies.length];
 
 
@@ -49,7 +55,8 @@ if (devHash == "#1") {
 const clue2 = ["⬛", "🟩"];
 const clue3 = ["⬛", "🟨", "🟩"];
 
-const generateShareString = (gameState: any, points: number) => `Movieguesser #${currentDay} (${points}/100)
+const generateShareString = (gameState: any, points: number, win: boolean) => `${win ? "🏆" : "💀"} Movieguesser #${currentDay} (${100 - points}/100)
+
 🇹:${clue3[gameState.title]}
 🇾:${clue2[gameState.year]}
 🇵:${clue3[gameState.poster]}
@@ -80,13 +87,18 @@ function App() {
   const [showInfo, InfoModal] = useModal();
   const [gameState, setGameState] = useGameState(currentDay, movie.title);
   const [newNotification, setNewNotification] = useState<string>();
+  const [background, setBackground] = useState(settings ? JSON.parse(settings).background : "");
+  const [gameOver, setGameOver] = useState(gameState.status !== "UNFINISHED");
 
   useEffect(() => {
     //notificationHandler.sendNotification(latestNotification, 10000);
-  }, [])
+    setGameOver(gameState.status !== "UNFINISHED")
+  }, [gameState])
 
+  //style={{ backgroundImage: `url(${movie.backdrop})` }} 
   return (
-    <div id="app" className="bg-primary-900 og:bg-og-900 min-h-screen max-h-screen h-full w-screen text-text-col">
+    <div id="app" className="bg-primary-900 min-h-screen max-h-screen h-full w-screen text-text-col overflow-auto relative">
+      <div className={`absolute full overflow-hidden`}><img src={background} className="full object-cover blur-[1vh]" /></div>
       <Notifications notificationHandler={notificationHandler} />
       <Navbar
         onStats={() => showStats(true)}
@@ -95,7 +107,12 @@ function App() {
       />
 
       <SettingsModal>
-        <Settings />
+        <Settings
+          gameOver={gameOver}
+          movieInfo={movie}
+          onSetBackground={(bg: any) => setBackground(bg)}
+          notificationHandler={notificationHandler}
+        />
       </SettingsModal>
 
       <StatsModal>
@@ -104,7 +121,7 @@ function App() {
           points={gameState.points}
           currentDay={currentDay}
           onShare={() => {
-            navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))
+            navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points, gameState.status === "WIN"))
             notificationHandler.sendNotification("Copied results to clipboard")
           }}
         />
@@ -126,7 +143,7 @@ function App() {
           }}
         />*/}
 
-      <div className="flex-center flex-col mb-2">
+      <div className="flex-center flex-col z-10">
         <Game
           {...gameState}
           onNewGameState={(newGameState: any) => {

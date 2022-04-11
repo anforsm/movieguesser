@@ -10,7 +10,7 @@ const ClueGrid = (props: any) => {
             {...clue}
             reveals={props.showAll ? clue.maxReveals : props.reveals[clue.clueID]}
             onReveal={() => props.onReveal(clue.clueID, clue.pointCost[props.reveals[clue.clueID]])}
-            value={clue.clueNum === -1 ? props.movie[clue.clue] : props.movie[clue.clue + "s"][clue.clueNum - 1]}
+            value={clue.clueNum === -1 ? props.movie[clue.value] : props.movie[clue.value][clue.clueNum - 1]}
             initialFlipDelay={100 * (index + 1)}
             gameOver={props.showAll}
           />

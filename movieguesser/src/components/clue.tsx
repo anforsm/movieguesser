@@ -5,6 +5,8 @@ import { useLongPress } from "use-long-press";
 import useFirstRender from "../hooks/useFirstRender";
 import budgetFormatter from "../utils/budgetFormatter"
 import { AiOutlineQuestion } from "react-icons/ai";
+import { ImEnlarge2 } from "react-icons/im";
+import useModal from "../hooks/useModal";
 
 interface ClueProps {
   clue: string,
@@ -114,10 +116,10 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   }, [delayedReveals])
 
 
-  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50`} onClick={reveal}>
-    <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{pointCost[reveals]}</div>
+  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50 shadow-2xl`} onClick={reveal}>
+    {reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>-{pointCost[reveals]}</div>}
 
-    <div className="w-full h-full">
+    <div className={`w-full h-full ${reveals !== maxReveals ? "cursor-pointer" : ""}`}>
       <FlipCard ref={flipCard}
         disabled={reveals >= maxReveals}
         onSwap={() => {
@@ -153,11 +155,11 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           //<span className=" bg-slate-800">Side One</span>
           // if we want an initial flip, then the front side should be set to "gray"
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS") ?
-            <div className={`w-full h-full ${colors[0]}`}>
+            <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
               <Component value={value} reveal={0} />
             </div>
             : // initialFlip === DONE or === NO FLIP
-            <div className={`w-full h-full ${colors[delayedReveals]}`}>
+            <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
               <Component value={value} reveal={delayedReveals} />
             </div>
 
@@ -169,18 +171,18 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           // back side will be the next reveal
           // if we want an initial flip, then the back side should be set as the correct side
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS" || initialFlip === "DONE") ?
-            <div className={`w-full h-full ${colors[delayedReveals]}`}>
+            <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
               <Component value={value} reveal={delayedReveals} />
             </div>
             :
             // otherwise we want to show the normal, +1 side, given there is another side
             delayedReveals < maxReveals ?
-              <div className={`w-full h-full ${colors[gameOver ? maxReveals : delayedReveals + 1]}`}>
+              <div className={`w-full h-full ${colors[gameOver ? maxReveals : delayedReveals + 1]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
                 <Component value={value} reveal={gameOver ? maxReveals : delayedReveals + 1} />
               </div>
               :
               // if there is no other side, we use the gray side
-              <div className={`w-full h-full ${colors[0]}`}>
+              <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
                 <Component value={value} reveal={0} />
               </div>
 
@@ -285,7 +287,6 @@ const Title = ({ value, reveal }: ClueValProps) => {
   }
   return <div className="full flex flex-col">
     <div className="label">Title</div>
-    <br />
     <div className="flex-center grow"><span className={`text-[2.3vh] ${reveal >= 1 || 'hidden'}`}>{title}</span></div>
   </div>
 }
@@ -294,23 +295,35 @@ const Year = ({ value, reveal }: ClueValProps) => {
   // 6
   return <div className="full flex flex-col">
     <div className="label">Release year</div>
-    <br />
     {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
 const Poster = ({ value, reveal }: ClueValProps) => {
+  const poster_medium_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_medium_blur/${value}_medium_blur.jpg`
+  const poster_large_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_large_blur/${value}_large_blur.jpg`
+  //const [showEnlargePoster, EnlargedPoster] = useModal();
+  const [showEnlargePoster, setShowEnlargePoster] = useState(false);
+
   return <div className="overflow-hidden h-full rounded-[1.2vh]">
     <div className="label">Poster</div>
-    {reveal === 1 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[1vh] scale-125" src={value} /></div>}
-    {reveal >= 2 && <div className="overflow-hidden"><img className="h-full w-full object-cover blur-[0.5vh] scale-125" src={value} /></div>}
+    {showEnlargePoster && <div className="fixed"><img className="h-full w-full object-cover" src={poster_large_blur} /></div>}
+    <div className="overflow-hidden relative">
+      {false && <button
+        className="enlarge-button absolute top-1 right-1 bg-black/60 hover:bg-black/60 text-white p-2 rounded-md cursor-pointer"
+        onClick={(e: any) => { e.stopPropagation(); setShowEnlargePoster(true) }}
+        onMouseEnter={(e: any) => e.stopPropagation()}
+      >
+        <ImEnlarge2 /></button>}
+      {reveal === 1 && <img className="h-full w-full object-cover" src={poster_large_blur} />}
+      {reveal >= 2 && <img className="h-full w-full object-cover" src={poster_medium_blur} />}
+    </div>
   </div>
 }
 
 const Rating = ({ value, reveal }: ClueValProps) => {
   return <div className="full flex flex-col">
     <div className="label">Rating</div>
-    <br />
     {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
@@ -318,7 +331,6 @@ const Rating = ({ value, reveal }: ClueValProps) => {
 const Director = ({ value, reveal }: ClueValProps) => {
   return <div className="full flex flex-col">
     <div className="label">Director</div>
-    <br />
     {reveal >= 1 && <div className="flex-center flex-col grow"><span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
@@ -326,7 +338,6 @@ const Director = ({ value, reveal }: ClueValProps) => {
 const Writer = ({ value, reveal }: ClueValProps) => {
   return <div>
     <span>Writer</span>
-    <br />
     {reveal >= 1 && <span className="text-4xl">{value}</span>}
   </div>
 }
@@ -335,7 +346,6 @@ const Budget = ({ value, reveal }: ClueValProps) => {
   let formattedBudget = budgetFormatter(value);
   return <div className="w-full h-full flex flex-col">
     <div className="label">Budget</div>
-    <br />
     {reveal >= 1 && <div className="flex-center flex-col grow">
       <span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.unit}{formattedBudget.number}</span>
       <span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix.toUpperCase()}</span>
@@ -346,7 +356,6 @@ const Budget = ({ value, reveal }: ClueValProps) => {
 const Quote = ({ value, reveal }: ClueValProps) => {
   return <div className="bg-inherit">
     <div className="label">Quote</div>
-    <br />
     {reveal >= 1 && <span className="text-[2.7vh] italic">"{value}"</span>}
   </div>
 }
