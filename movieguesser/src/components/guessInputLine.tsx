@@ -46,10 +46,15 @@ const GuessInputLine = (props: any) => {
   }, [inputFocused])
 
   return (
-    <div className="w-full grow flex-center flex-col pb-4 md:pb-[0.5vh] text-[1.5rem] md:text-[2vh]">
-      {props.guesses == 0 && <span>&nbsp;</span>}
-      {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
-      {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+    <div className={`w-full ${!props.isTutorial ? "grow" : ""} flex-center flex-col ${true ? "pb-4 md:pb-[0.5vh]" : ""} text-[1.5rem] md:text-[2vh]`}>
+      {!props.isTutorial &&
+        <div className={`${props.isTutorial ? "text-base" : ""}`}>
+          {props.guesses == 0 && <span>&nbsp;</span>}
+
+          {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
+          {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+        </div>
+      }
       <div className="h-[7%] w-full text-[0]">&nbsp;</div>
       <div onBlur={() => setInputFocused(false)} className="h-12 md:h-[3.2vh] relative flex items-center w-[96%]">
         <input
@@ -110,6 +115,13 @@ const GuessInputLine = (props: any) => {
           </ul>
         }
       </div>
+      {props.isTutorial &&
+        <div className={`${props.isTutorial ? "text-base" : ""}`}>
+          {props.guesses == 0 && <span>&nbsp;</span>}
+          {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
+          {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+        </div>
+      }
       {/*<div className="h-[7%] w-full text-[0]">&nbsp;</div>*/}
     </div >)
 }

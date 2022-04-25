@@ -4,34 +4,46 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import loadSettings from "../utils/loadSettings";
 import Dropdown from "./dropdown";
 import Toggle from "./toggle";
+const toggles = [{
+  label: "Show unblurred poster after game over",
+  short: "posterblur"
+},
+{
+  label: "Show statistics after game over",
+  short: "stats"
+},
+{
+  label: "Show link to IMDb after game over",
+  short: "imdb"
+},
+{
+  label: "Show button to enlarge poster",
+  short: "posterzoom"
+}
+]
+
+let defaultToggleStates: Record<string, boolean> = {}
+toggles.forEach(({ short }: { short: string, label: string }) => defaultToggleStates[short] = false);
+
+
+let set = localStorage.getItem("settings");
+if (set) {
+  let set2 = JSON.parse(set);
+  if (!set2?.toggleStates) {
+    localStorage.setItem("settings", JSON.stringify({
+      ...set2,
+      toggleStates: defaultToggleStates
+    }));
+  }
+}
 
 const Settings = (props: any) => {
-  const toggles = [{
-    label: "Show unblurred poster after game over",
-    short: "posterblur"
-  },
-  {
-    label: "Show statistics after game over",
-    short: "stats"
-  },
-  {
-    label: "Show link to IMDb after game over",
-    short: "imdb"
-  },
-  {
-    label: "Show button to enlarge poster",
-    short: "posterzoom"
-  }
-  ]
-
-  let defaultToggleStates: Record<string, boolean> = {}
-  toggles.forEach(({ short }: { short: string, label: string }) => defaultToggleStates[short] = false);
-
   const [settings, setSettings] = useLocalStorage("settings", {
     theme: "movieguesser",
     background: "",
     toggleStates: defaultToggleStates
-  })
+  });
+
 
 
   useEffect(() => {
@@ -98,7 +110,7 @@ const Settings = (props: any) => {
 }
 
 const ToggleGroup = (props: any) => {
-  return <>{props.toggles.map((toggle: any) => <div className="flex w-full pb-2 pt-1 border-b border-b-text-col">
+  return <>{props.toggles.map((toggle: any) => <div key={toggle.short} className="flex w-full pb-2 pt-1 border-b border-b-text-col">
     <span className="grow mr-4">{toggle.label}</span>
     <Toggle onToggle={(val: boolean) => props.onToggle(toggle.short, val)} toggle={props.toggleStates[toggle.short]} />
   </div>)}

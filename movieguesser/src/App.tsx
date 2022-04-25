@@ -12,6 +12,7 @@ import Settings from './components/settings';
 import Info from './components/info';
 import loadSettings from './utils/loadSettings';
 import moment from 'moment';
+import clueSpecification from './clueSpecification';
 /*
 const movies = oldmovies.map(movie => {
   let newMovie: any = { ...movie }
@@ -128,7 +129,7 @@ function App() {
       </StatsModal>
 
       <InfoModal>
-        <Info />
+        <Info tutorialMovieInfo={movies[71]} />
       </InfoModal>
 
       {/*showStats &&
@@ -159,6 +160,8 @@ function App() {
           }}
           movieInfo={movie}
           DEV={DEV}
+          clueSpecification={clueSpecification}
+          isTutorial={false}
         />
       </div>
       {DEV && <button className="bg-white" onClick={() => { localStorage.removeItem("gameState"); window.location.reload() }}>Reset day</button>}

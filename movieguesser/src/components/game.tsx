@@ -2,6 +2,7 @@ import { useState } from "react"
 import ClueGrid from "./clueGrid"
 import GuessInput from "./guessInput"
 import GuessInputLine from "./guessInputLine";
+import Scorebar from "./scorebar";
 
 const daysPassed = (date: Date) => {
   let current = new Date(date.getTime()).getTime();
@@ -52,19 +53,14 @@ const Game = (props: any) => {
   //<div id="game" className="flex-center grow">
   //</div>
   return (
-    <div id="game" className="bg-primary-800 text-center flex-center flex-col grow aspect-[7/11] rounded-[2vh] mb-[1vh] shadow-2xl">
-      <div className="h-[15%] w-full flex-center flex-col">
-        {props.DEV && <h1 className="text-[5vh] w-full">{props.points}</h1>}
+    <div id="game" className={`bg-primary-800 text-center flex-center flex-col grow ${!props.isTutorial ? "aspect-[7/11]" : "aspect-[1/1.1]"} rounded-[2vh] mb-[1vh] shadow-2xl`}>
+      <div className={`${!props.isTutorial ? "h-[15%]" : "h-[11vh]"} w-full flex-center flex-col`}>
+        {props.DEV && <h1 className={`${!props.tutorial ? "text-[5vh]" : "text-sm"} w-full`}>{props.points}</h1>}
         {props.DEV && <GuessInput onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />}
-        {!props.DEV && <GuessInputLine onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />}
-        {!props.DEV && <div className="h-[3rem] md:h-[5vh] w-[96%] rounded-[1.2vh] bg-blue-900 overflow-hidden flex flex-col justify-center text-white">
-          <div className="label">Points</div>
-          <div className="grow bg-blue-600 text-right overflow-hidden" style={{ width: `${100 - props.points}%` }}>
-            <span className="h-full text-[1.5rem] md:text-[3vh] leading-[0.90em] mr-2">{100 - props.points}</span>
-          </div>
-        </div>}
+        {!props.DEV && <GuessInputLine isTutorial={props.isTutorial} onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />}
+        {!props.DEV && <Scorebar points={props.points} />}
       </div>
-      <ClueGrid onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
+      <ClueGrid isTutorial={props.isTutorial} clueSpecification={props.clueSpecification} onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
     </div>
   )
 }

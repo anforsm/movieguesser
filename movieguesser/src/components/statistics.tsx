@@ -50,8 +50,8 @@ const CustomizedDot = (props: any) => {
 };
 
 const Statistics = (props: any) => {
-  const [experimental, setExperimental] = useState(true);
   useLockBodyScroll();
+  if (props.stats.length === 0) return <span>Play a game first...</span>
   let days = Object.keys(props.stats).map(day => Number.parseInt(day));
   let maxStreak = 0;
   let prevDay = days[0];

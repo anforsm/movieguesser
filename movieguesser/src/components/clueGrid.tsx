@@ -1,11 +1,10 @@
-import clueSpecification from "../clueSpecification"
 import Clue from "./clue"
 
 const ClueGrid = (props: any) => {
   return (
-    <div id="clueTable" className="p-[2%] w-full grow">
-      {Object.values(clueSpecification).map((clue: any, index: number) => (
-        <div key={clue.clueID} className={clue.clue}>
+    <div id="clueTable" className="clueTable p-[2%] w-full grow">
+      {Object.values(props.clueSpecification).map((clue: any, index: number) => (
+        <div key={clue.clueID} className={clue.clueID}>
           <Clue
             {...clue}
             reveals={props.showAll ? clue.maxReveals : props.reveals[clue.clueID]}

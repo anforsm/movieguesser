@@ -75,6 +75,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   user-select: none;
+  line-height: 170%;
 }
 
 code {
@@ -286,7 +287,20 @@ a {
   grid-area: navbar;
 }
 
-#clueTable {
+.tutorial .clueTable {
+  display: grid;
+  grid-gap: 1.2vh;
+  grid-template:
+    "title    title     title "
+    "poster   actor1    year  "
+    "poster   actor1    budget"
+  ;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+
+}
+
+.clueTable {
   display: grid;
   grid-gap: 1.2vh;
   grid-template:
@@ -294,14 +308,14 @@ a {
     "poster   year      rating  "
     "poster   director  budget  "
     "quote    quote     quote   "
-    "actor    actor     actor   "
+    "actor1    actor2     actor3"
   ;
   grid-template-rows: 7fr 8fr 11fr 10fr 18fr;
   grid-template-columns: repeat(3, 1fr);
 }
 
 @media only screen and (max-width: 768px) {
-  #clueTable {
+  .clueTable {
     flex-grow: 1;
     display: grid;
     grid-gap: 10px;
@@ -311,8 +325,8 @@ a {
       "year     rating  "
       "director budget  "
       "quote    quote   "
-      "actor    actor   "
-      "actor    actor   "
+      "actor1    actor2 "
+      "actor3    actor4 "
     ;
     grid-template-rows: 7rem 38rem 7rem 10rem 10rem 19rem 19rem;
     grid-template-columns: repeat(2, 1fr);
@@ -326,7 +340,7 @@ a {
 
 }
 
-#clueTable>div>div {
+.clueTable>div>div {
   min-width: 0;
 }
 
@@ -362,6 +376,12 @@ a {
   grid-area: quote;
 }
 
-.actor {
-  grid-template-columns: span 1;
+.actor1 {
+  grid-area: actor1;
+}
+.actor2 {
+  grid-area: actor2;
+}
+.actor3 {
+  grid-area: actor3;
 }

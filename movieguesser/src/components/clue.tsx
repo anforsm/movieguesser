@@ -19,6 +19,7 @@ interface ClueProps {
   value: any,
   initialFlipDelay: number,
   gameOver: boolean,
+  dontShowPointCostOnHover?: boolean,
 }
 
 interface card {
@@ -29,7 +30,7 @@ interface card {
 
 const animationDuration = 300;
 
-const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals, initialFlipDelay, gameOver }: ClueProps) => {
+const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals, initialFlipDelay, gameOver, dontShowPointCostOnHover }: ClueProps) => {
   const firstRender = useFirstRender();
   const [showPointCost, setShowPointCost] = useState(false);
   const [delayedReveals, setDelayedReveals] = useState(reveals);
@@ -117,7 +118,7 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
 
 
   return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50 shadow-2xl`} onClick={reveal}>
-    {reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>-{pointCost[reveals]}</div>}
+    {reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{!dontShowPointCostOnHover && `-${pointCost[reveals]}`}</div>}
 
     <div className={`w-full h-full ${reveals !== maxReveals ? "cursor-pointer" : ""}`}>
       <FlipCard ref={flipCard}
@@ -309,7 +310,7 @@ const Poster = ({ value, reveal }: ClueValProps) => {
     <div className="label">Poster</div>
     {showEnlargePoster && <div className="fixed"><img className="h-full w-full object-cover" src={poster_large_blur} /></div>}
     <div className="overflow-hidden relative">
-      {false && <button
+      {true && <button
         className="enlarge-button absolute top-1 right-1 bg-black/60 hover:bg-black/60 text-white p-2 rounded-md cursor-pointer"
         onClick={(e: any) => { e.stopPropagation(); setShowEnlargePoster(true) }}
         onMouseEnter={(e: any) => e.stopPropagation()}
@@ -348,7 +349,7 @@ const Budget = ({ value, reveal }: ClueValProps) => {
     <div className="label">Budget</div>
     {reveal >= 1 && <div className="flex-center flex-col grow">
       <span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.unit}{formattedBudget.number}</span>
-      <span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix.toUpperCase()}</span>
+      <span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix?.toUpperCase()}</span>
     </div>}
   </div>
 }
