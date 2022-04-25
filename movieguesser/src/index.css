@@ -1,41 +1,38 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --clue-gray: theme("colors.zinc[600]");
-    --clue-yellow: #c9b458;
-    --clue-green: #6aaa64;
+body {
+  --clue-gray: theme("colors.zinc[600]");
+  --clue-yellow: #c9b458;
+  --clue-green: #6aaa64;
 
-    --text-col: theme("colors.slate[50]");
-  }
+  --text-col: theme("colors.slate[50]");
+}
 
-  .og {
-    --primary-600: theme("colors.slate[600]");
-    --primary-700: theme("colors.slate[700]");
-    --primary-800: theme("colors.slate[800]");
-    --primary-900: theme("colors.slate[900]");
+.og {
+  --primary-600: theme("colors.slate[600]");
+  --primary-700: theme("colors.slate[700]");
+  --primary-800: theme("colors.slate[800]");
+  --primary-900: theme("colors.slate[900]");
 
-    --clue-gray: theme("colors.slate[600]");
+  --clue-gray: theme("colors.slate[600]");
 
-  }
+}
 
-  .dark {
-    --primary-600: theme("colors.neutral[600]");
-    --primary-700: theme("colors.neutral[700]");
-    --primary-800: theme("colors.neutral[800]");
-    --primary-900: theme("colors.neutral[900]");
-  }
+.dark {
+  --primary-600: theme("colors.neutral[600]");
+  --primary-700: theme("colors.neutral[700]");
+  --primary-800: theme("colors.neutral[800]");
+  --primary-900: theme("colors.neutral[900]");
+}
 
-  .light {
-    --primary-600: theme("colors.slate[300]");
-    --primary-700: theme("colors.slate[200]");
-    --primary-800: theme("colors.slate[100]");
-    --primary-900: theme("colors.slate[50]");
+.light {
+  --primary-600: theme("colors.slate[300]");
+  --primary-700: theme("colors.slate[200]");
+  --primary-800: theme("colors.slate[100]");
+  --primary-900: theme("colors.slate[50]");
 
-    --text-col: theme("colors.slate[900]");
-  }
+  --text-col: theme("colors.slate[900]");
 }
 
 @layer utilities {
@@ -84,6 +81,7 @@ code {
 }
 
 button, select, input {
+  border: none;
   border-radius: 0.375rem;
   background-color: var(--primary-700);
   transition: background-color 150ms ease-in-out;

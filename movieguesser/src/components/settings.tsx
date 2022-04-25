@@ -1,3 +1,4 @@
+import { FormControl, FormControlLabel, FormGroup, Switch } from "@mui/material";
 import { useEffect, useState } from "react";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -91,6 +92,19 @@ const Settings = (props: any) => {
       </div>
 
       <div>&nbsp;</div>
+      <FormControl>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch name="test" />
+            }
+            labelPlacement="start"
+            label="Test"
+          />
+        </FormGroup>
+      </FormControl>
+
+
       <ToggleGroup toggleStates={settings.toggleStates} toggles={toggles} onToggle={(shortName: string, val: boolean) => {
         let prevToggleStates = { ...settings.toggleStates };
         prevToggleStates[shortName] = val

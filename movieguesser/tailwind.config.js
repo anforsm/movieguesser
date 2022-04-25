@@ -4,6 +4,7 @@ module.exports = {
   content: [
     "./src/**/*{js,jsx,ts,tsx}"
   ],
+  important: "#root",
   mode: "jit",
   dark: "class",
   blue: "class",
