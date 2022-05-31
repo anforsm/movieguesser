@@ -151,7 +151,7 @@ const Info = (props: any) => {
 </div>*/}
 
         <div className="w-full">
-          <span>Each day there will be a new movie to guess</span>
+          <span>Each day there will be a new movie to guess.</span>
         </div>
 
         <div className="w-full">
@@ -161,7 +161,7 @@ const Info = (props: any) => {
       <div className="w-full flex-center gap-2 absolute bottom-0">
         <button title="Reset tutorial" onClick={reset} className="h-8 aspect-square absolute left-0 flex-center"><VscDebugRestart /></button>
         <button title="Previous page" disabled={page === 0} onClick={() => setPage(prevPage => prevPage - 1)} className="h-8 aspect-square flex-center"><AiOutlineArrowLeft /></button>
-        <span>{page + 1}</span>
+        <span>{page + 1} / 3</span>
         <button title="Next page" disabled={page === 2} onClick={() => setPage(prevPage => prevPage + 1)} className="h-8 aspect-square flex-center"><AiOutlineArrowRight /></button>
       </div>
     </div>

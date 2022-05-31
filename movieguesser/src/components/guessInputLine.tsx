@@ -19,6 +19,8 @@ const GuessInputLine = (props: any) => {
   const [currentGuess, setCurrenGuess] = useState("")
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(-1);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [currentTextInput, setCurrentTextInput] = useState("");
+  //const [pressedLetters, setPressedLetters] = useState("");
   const inputRef = useRef<any>();
   const onGuess = () => props.onGuess(currentGuess)
 
@@ -42,6 +44,11 @@ const GuessInputLine = (props: any) => {
   }, [inputFocused, currentGuess])
 
   useEffect(() => {
+    setCurrenGuess(currentTextInput);
+    setSuggestions(getTitleMatches(currentTextInput))
+  }, [currentTextInput])
+
+  useEffect(() => {
     setCurrentSuggestionIndex(-1);
   }, [inputFocused])
 
@@ -51,7 +58,7 @@ const GuessInputLine = (props: any) => {
         <div className={`${props.isTutorial ? "text-base" : ""}`}>
           {props.guesses == 0 && <span>&nbsp;</span>}
 
-          {props.win && <span>You win! Congratulations! Score: {props.score}/100</span>}
+          {props.win && <span>You win! Congratulations! Score: {100 - props.score}/100</span>}
           {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
         </div>
       }
@@ -60,8 +67,10 @@ const GuessInputLine = (props: any) => {
         <input
           ref={inputRef}
           onFocus={() => setInputFocused(true)}
-          onChange={e => setCurrenGuess(e.target.value)}
+          onChange={e => { setCurrentTextInput(e.target.value); console.log("onchange") }}
+          onInput={e => { console.log(e) }}
           onKeyDown={e => {
+            console.log("keydown")
             if (e.key === "Enter") {
               inputRef.current.blur();
               onGuess();
@@ -79,22 +88,14 @@ const GuessInputLine = (props: any) => {
               setCurrenGuess(suggestions[newSuggestionIndex]);
             } else if (e.key === "Escape") {
               inputRef.current.blur();
-            } else { }
-            if (!(e.key.length === 1 || (e.key.length > 1 && /[^a-zA-Z0-9]/.test(e.key)) || e.key === "Spacebar" || e.key === "Backspace")) return
-            setCurrentSuggestionIndex(-1);
-            setSuggestions(getTitleMatches(currentGuess))
-          }}
+            }
+          }
+          }
           value={currentGuess}
           className="px-[0.6vh] mr-[0.6vh] h-full indent-1 focus:outline-none grow"
           placeholder="Guess..."
         />
 
-        <button
-          className="h-full flex-center aspect-[1.3/1] top-0 border-0 border-white"
-          onClick={onGuess}
-        >
-          <AiOutlineArrowRight />
-        </button>
 
         {showSuggestions &&
           <ul
@@ -109,11 +110,19 @@ const GuessInputLine = (props: any) => {
                 }}
                 onMouseEnter={() => setCurrentSuggestionIndex(i)}
                 className={`cursor-pointer ${i == currentSuggestionIndex ? "bg-primary-600" : ""} border-b border-b-primary-800 pl-[calc(0.25rem+0.6vh)]`}
+                tabIndex={0}
               >
                 {title}
               </li>)}
           </ul>
         }
+
+        <button
+          className="primary h-full flex-center aspect-[1.3/1] top-0 border-0 border-white"
+          onClick={onGuess}
+        >
+          <AiOutlineArrowRight />
+        </button>
       </div>
       {props.isTutorial &&
         <div className={`${props.isTutorial ? "text-base" : ""}`}>

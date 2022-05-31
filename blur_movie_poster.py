@@ -7,7 +7,7 @@ def main():
     # yellow = 20
     #image = image.filter(ImageFilter.GaussianBlur(radius=20))
     # image.show()
-    create_blurred_versions("tt2084970")
+    create_blurred_versions("tt1843866")
 
 
 def create_blurred_versions(imdbID):
@@ -22,9 +22,9 @@ def create_blurred_versions(imdbID):
 
 def blur_image(image, level):
     if level == "large":
-        return image.filter(ImageFilter.GaussianBlur(radius=20))
+        return image.filter(ImageFilter.GaussianBlur(radius=25))
     elif level == "medium":
-        return image.filter(ImageFilter.GaussianBlur(radius=12))
+        return image.filter(ImageFilter.GaussianBlur(radius=15))
 
 
 if __name__ == "__main__":

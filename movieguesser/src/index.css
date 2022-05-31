@@ -8,6 +8,13 @@
     --clue-yellow: #c9b458;
     --clue-green: #6aaa64;
 
+    --secondary-500: #83d57b;
+    --secondary-600: #75bd6f;
+    --secondary-700: #6aaa64;
+    --secondary-800: #4a7545;
+    --secondary-900: #40663c;
+
+
     --text-col: theme("colors.slate[50]");
   }
 
@@ -85,12 +92,35 @@ code {
 
 button, select, input {
   border-radius: 0.375rem;
-  background-color: var(--primary-700);
   transition: background-color 150ms ease-in-out;
 }
 
-button:hover {
+select, input {
+  background-color: var(--primary-700);
+}
+
+button.primary {
+  background-color: var(--primary-700);
+}
+
+button.secondary {
+  background-color: var(--secondary-900);
+}
+
+button.primary:hover {
   background-color: var(--primary-600);
+}
+
+button.secondary:hover {
+  background-color: var(--secondary-800);
+}
+
+button:disabled:hover {
+  background-color: var(--primary-700);
+}
+
+button.secondary:disabled:hover {
+  background-color: var(--secondary-900);
 }
 
 select option:hover {
@@ -178,20 +208,34 @@ a {
   }
 }
 
-#modal {
-  animation: slideIn 200ms;
+.sclue:hover::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  content: "test";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(0 0 0 / 0.2);
+  font-size: 4.5vh;
 }
 
-#modal.closing {
-  animation: slideOut 200ms !important;
+.modal {
+  animation: slideIn 100ms forwards ease-out;
 }
 
-#modalBG {
-  animation: slideInBG 200ms;
+.modal.closing {
+  animation: slideOut 70ms forwards ease-out !important;
 }
 
-#modalBG.closing {
-  animation: slideOutBG 200ms !important;
+.modalBG {
+  animation: slideInBG 100ms forwards ease-out;
+}
+
+.modalBG.closing {
+  animation: slideOutBG 70ms forwards ease-out !important;
 }
 
 @keyframes slideInNT {
@@ -220,13 +264,12 @@ a {
 
 
 
-.notification {
-  animation: slideInNT 100ms ease 0s, slideOutNT 100ms ease 1500ms;
-  animation-fill-mode: forwards;
+.notification.open {
+  animation: slideInNT 100ms forwards;
 }
 
-.notification.closing {
-  animation: slideOutNT 100ms !important;
+.notification.close {
+  animation: slideOutNT 100ms forwards;
 }
 
 @keyframes pointCostBGIn {
@@ -258,14 +301,16 @@ a {
 }
 
 
+.pointCost {
+  transition: 50ms ease-out;
+}
+
 .pointCostShow {
   opacity: 1;
-  animation: pointCostBGIn 50ms ease forwards;
 }
 
 .pointCostHide {
   opacity: 0;
-  animation: pointCostBGOut 50ms ease forwards;
 }
 
 #app {

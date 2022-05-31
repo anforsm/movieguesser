@@ -1,12 +1,15 @@
-import { FC, useState } from "react";
-import Modal from "../components/modal";
+import { FC, useMemo, useState } from "react";
+//import Modal from "../components/modal";
 
-const useModal = (): readonly [(value: boolean | ((val: boolean) => boolean)) => void, FC] => {
+//=> <Modal onClose={() => setOpen(false)} open={open}>{props.children}</Modal>, [open])
+const useModal = (Modal: any): readonly [(value: boolean | ((val: boolean) => boolean)) => void, FC, any] => {
   const [open, setOpen] = useState(false);
 
-  const ModalWrapper = (props: any) => open ? <Modal onClose={() => setOpen(false)}>{props.children}</Modal> : <></>
 
-  return [setOpen, ModalWrapper]
+  return [setOpen, Modal, {
+    onClose: () => setOpen(false),
+    open: open,
+  }]
 }
 
 export default useModal;

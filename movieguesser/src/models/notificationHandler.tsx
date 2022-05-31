@@ -4,11 +4,21 @@ class NotificationHandler {
     this.observers = [];
   }
 
-  sendNotification(text: string, duration: number = 2000) {
+  sendCustomNotification(element: any, duration: number = 2000, autoClose: boolean = true) {
+    this.notifyObservers({
+      type: "newNotification",
+      content: element,
+      duration: duration,
+      autoClose: autoClose,
+    });
+  }
+
+  sendNotification(text: string, duration: number = 2000, autoClose: boolean = true) {
     this.notifyObservers({
       type: "newNotification",
       content: text,
       duration: duration,
+      autoClose: autoClose,
     });
   }
 

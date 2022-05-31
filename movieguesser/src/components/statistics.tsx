@@ -22,7 +22,7 @@ const TimeToNewDay = () => {
     }, 1000)
     return () => clearInterval(i);
   })
-  return <span className="text-2xl font-semibold">
+  return <span className="text-2xl font-semibold tabular-nums">
     {timeLeft.hours.toString().padStart(2, "0")}:
     {timeLeft.minutes.toString().padStart(2, "0")}:
     {timeLeft.seconds.toString().padStart(2, "0")}
@@ -40,7 +40,7 @@ const CustomizedDot = (props: any) => {
       //</g>
       <svg x={cx - dotSize} y={cy - dotSize} width={dotSize * 2} height={dotSize * 2} fill="white">
         <g transform={`translate(${dotSize} ${dotSize})`}>
-          <circle r={`${dotSize}`} fill="green" />
+          <circle r={`${dotSize}`} fill="var(--secondary-700)" />
         </g>
       </svg>
     );
@@ -158,7 +158,7 @@ const Statistics = (props: any) => {
       </div>
 
       <div className="flex-center w-1/2 h-full border-l-[1px] border-text-col">
-        <button onClick={props.onShare} className="bg-green-700 p-2 rounded-md text-white">Copy results</button>
+        <button onClick={props.onShare} className="secondary p-2 rounded-md text-white">Copy results</button>
       </div>
     </div>
   </>
@@ -177,9 +177,9 @@ const SimpleTextStats = (props: any) => {
   addStat("Current Streak", props.currentStreak);
   return <div className="w-full flex">
     {stats.map((stat: any) =>
-      <div key={stat.label} className="flex-1 shadow-md m-2 p-1 rounded-md flex-center flex-col bg-primary-700">
+      <div key={stat.label} className="flex-1 shadow-md m-2 p-1 rounded-md flex-center flex-col bg-primary-700 text-center">
         <div className="text-2xl font-bold">{stat.value}</div>
-        <div className="text-xs">{stat.label}</div>
+        <div className="text-xs flex-grow flex-center">{stat.label}</div>
       </div>)}
   </div>
   /*
@@ -224,7 +224,7 @@ const CategoryBarChart = (props: any) => (
     <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
       <XAxis type="number" axisLine={false} tick={false} />
       <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "var(--text-col)" }} />
-      <Bar dataKey="revealFrac" fill="green" minPointSize={15} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
+      <Bar dataKey="revealFrac" fill="var(--secondary-700)" minPointSize={15} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
         <LabelList dataKey="reveals" position="insideRight" fill="white" />
       </Bar>
     </BarChart>
@@ -234,9 +234,9 @@ const strokeWidth = 2;
 const PointDistributionLineChart = (props: any) => (
   <ResponsiveContainer height={200}>
     <LineChart data={props.pointStats}>
-      <XAxis dataKey="points" domain={[0, 110]} ticks={[0, 20, 40, 60, 80, 100]} fill="white" />
+      <XAxis dataKey="points" domain={[0, 110]} ticks={[0, 20, 40, 60, 80, 100]} stroke="var(--text-col)" />
       <Line type="basis" dataKey="probability" stroke="var(--text-col)" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
-      <ReferenceLine x={props.points} stroke="green" strokeWidth={strokeWidth} />
+      <ReferenceLine x={props.points} stroke="var(--secondary-700)" strokeWidth={strokeWidth} />
     </LineChart>
   </ResponsiveContainer>
 )

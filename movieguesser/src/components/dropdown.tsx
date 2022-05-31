@@ -16,7 +16,7 @@ const Dropdown = (props: any) => {
     </button>
     {showOptions &&
       <div className="absolute bg-primary-700">
-        {props.options.map((option: string) => <button
+        {props.options.map((option: string) => <button key={option}
           className={`block text-left px-2 w-full ${currHoverOption === option ? "bg-primary-600" : ""}`}
           onMouseEnter={() => setCurrHoverOption(option)}
           onClick={() => {

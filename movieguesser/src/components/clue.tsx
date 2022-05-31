@@ -7,6 +7,9 @@ import budgetFormatter from "../utils/budgetFormatter"
 import { AiOutlineQuestion } from "react-icons/ai";
 import { ImEnlarge2 } from "react-icons/im";
 import useModal from "../hooks/useModal";
+import { createPortal } from "react-dom";
+import { Modal } from "./modal";
+import { SettingsContext } from "../App";
 
 interface ClueProps {
   clue: string,
@@ -117,8 +120,8 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
   }, [delayedReveals])
 
 
-  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue w-full h-full text-slate-50 shadow-2xl`} onClick={reveal}>
-    {reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} absolute z-10 w-full h-[calc(100%-2.18vh)] top-[2.18vh] flex-center text-[4.5vh] ${reveals !== maxReveals ? "bg-black/20" : ""} pointer-events-none`}>{!dontShowPointCostOnHover && `-${pointCost[reveals]}`}</div>}
+  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue full text-slate-50 shadow-2xl`} onClick={reveal} tabIndex={0}>
+    {true && reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} pointCost absolute z-10 full flex-center text-[4.5vh] bg-black/20 pointer-events-none`}>{!dontShowPointCostOnHover && `-${pointCost[delayedReveals]}`}</div>}
 
     <div className={`w-full h-full ${reveals !== maxReveals ? "cursor-pointer" : ""}`}>
       <FlipCard ref={flipCard}
@@ -157,11 +160,11 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           // if we want an initial flip, then the front side should be set to "gray"
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS") ?
             <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={0} />
+              <Component value={value} reveal={0} gameOver={gameOver} />
             </div>
             : // initialFlip === DONE or === NO FLIP
             <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={delayedReveals} />
+              <Component value={value} reveal={delayedReveals} gameOver={gameOver} />
             </div>
 
         }
@@ -173,18 +176,18 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           // if we want an initial flip, then the back side should be set as the correct side
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS" || initialFlip === "DONE") ?
             <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={delayedReveals} />
+              <Component value={value} reveal={delayedReveals} gameOver={gameOver} />
             </div>
             :
             // otherwise we want to show the normal, +1 side, given there is another side
             delayedReveals < maxReveals ?
               <div className={`w-full h-full ${colors[gameOver ? maxReveals : delayedReveals + 1]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-                <Component value={value} reveal={gameOver ? maxReveals : delayedReveals + 1} />
+                <Component value={value} reveal={gameOver ? maxReveals : delayedReveals + 1} gameOver={gameOver} />
               </div>
               :
               // if there is no other side, we use the gray side
               <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-                <Component value={value} reveal={0} />
+                <Component value={value} reveal={0} gameOver={gameOver} />
               </div>
 
           /*
@@ -219,7 +222,6 @@ const FlipCard = forwardRef((props: any, ref) => {
   const [frontSide, setFrontSide] = useState(true);
   const [currentSwap, setSwap] = useState(false);
   const [initial, setInitial] = useState(false);
-  const [didInitialFlip, setDidInitialFlip] = useState(false);
   const flip = () => setFrontSide(side => !side);
   const swap = () => setSwap(prevSwap => !prevSwap);
   const flipNswap = () => { flip(); swap(); };
@@ -276,7 +278,8 @@ const FlipCard = forwardRef((props: any, ref) => {
 
 interface ClueValProps {
   value: string,
-  reveal: number
+  reveal: number,
+  gameOver: boolean,
 }
 
 const Title = ({ value, reveal }: ClueValProps) => {
@@ -300,24 +303,43 @@ const Year = ({ value, reveal }: ClueValProps) => {
   </div>
 }
 
-const Poster = ({ value, reveal }: ClueValProps) => {
+const Poster = ({ value, reveal, gameOver }: ClueValProps) => {
+  const poster_no_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters/${value}.jpg`
   const poster_medium_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_medium_blur/${value}_medium_blur.jpg`
   const poster_large_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_large_blur/${value}_large_blur.jpg`
-  //const [showEnlargePoster, EnlargedPoster] = useModal();
-  const [showEnlargePoster, setShowEnlargePoster] = useState(false);
+  const [showEnlargedPoster, EnlargedPoster, enlargedPosterProps] = useModal(Modal);
+
+  const getPosterImage = (posterblur: boolean) => reveal === 1 ?
+    poster_large_blur :
+    (posterblur && gameOver ?
+      poster_no_blur :
+      poster_medium_blur
+    )
+
+  //{showEnlargePoster && <div className="fixed top-0 left-0"><img className="h-full w-full object-cover" src={poster_large_blur} /></div>}
 
   return <div className="overflow-hidden h-full rounded-[1.2vh]">
+
+
     <div className="label">Poster</div>
-    {showEnlargePoster && <div className="fixed"><img className="h-full w-full object-cover" src={poster_large_blur} /></div>}
     <div className="overflow-hidden relative">
-      {true && <button
-        className="enlarge-button absolute top-1 right-1 bg-black/60 hover:bg-black/60 text-white p-2 rounded-md cursor-pointer"
-        onClick={(e: any) => { e.stopPropagation(); setShowEnlargePoster(true) }}
-        onMouseEnter={(e: any) => e.stopPropagation()}
-      >
-        <ImEnlarge2 /></button>}
-      {reveal === 1 && <img className="h-full w-full object-cover" src={poster_large_blur} />}
-      {reveal >= 2 && <img className="h-full w-full object-cover" src={poster_medium_blur} />}
+      <SettingsContext.Consumer>
+        {settings => <>
+          <EnlargedPoster {...enlargedPosterProps}>
+            <img className="h-[80vh] object-cover" src={getPosterImage(settings.toggleStates.posterblur)} />
+          </EnlargedPoster>
+          {settings.toggleStates.posterzoom &&
+            <button
+              className="enlarge-button absolute top-1 right-1 bg-black/60 hover:bg-black/60 text-white p-2 rounded-md cursor-pointer"
+              onClick={(e: any) => { e.stopPropagation(); showEnlargedPoster(true); }}
+              onMouseEnter={(e: any) => e.stopPropagation()}
+            >
+              <ImEnlarge2 />
+            </button>}
+          {reveal >= 1 && <img className="h-full w-full object-cover" src={getPosterImage(settings.toggleStates.posterblur)} />}
+        </>
+        }
+      </SettingsContext.Consumer>
     </div>
   </div>
 }

@@ -26,10 +26,11 @@ def main():
     with open("shuffled_titles.json", "r") as f:
         allMovies = json.load(f)
     for movie in allMovies:
-        poster_medium_path, poster_large_path = create_blurred_versions(
-            movie["imdbID"])
-        upload_image(poster_medium_path)
-        upload_image(poster_large_path)
+        if movie["imdbID"] == "tt1843866":
+            poster_medium_path, poster_large_path = create_blurred_versions(
+                movie["imdbID"])
+            print(upload_image(poster_medium_path))
+            print(upload_image(poster_large_path))
 
 
 def get_actor_backdrop_poster():
