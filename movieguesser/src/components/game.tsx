@@ -1,6 +1,5 @@
 import { useState } from "react"
 import ClueGrid from "./clueGrid"
-import GuessInput from "./guessInput"
 import GuessInputLine from "./guessInputLine";
 import Scorebar from "./scorebar";
 
@@ -54,11 +53,9 @@ const Game = (props: any) => {
   //</div>
   return (
     <div id="game" className={`bg-primary-800 text-center flex-center flex-col grow ${!props.isTutorial ? "aspect-[7/11]" : "aspect-[1/1.1]"} rounded-[2vh] mb-[1vh] shadow-2xl`}>
-      <div className={`${!props.isTutorial ? "h-[15%]" : "h-[11vh]"} w-full flex-center flex-col`}>
-        {props.DEV && <h1 className={`${!props.tutorial ? "text-[5vh]" : "text-sm"} w-full`}>{props.points}</h1>}
-        {props.DEV && <GuessInput onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />}
-        {!props.DEV && <GuessInputLine isTutorial={props.isTutorial} onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />}
-        {!props.DEV && <Scorebar points={props.points} />}
+      <div className={`h-[15%] w-full flex-center flex-col`}>
+        <GuessInputLine isTutorial={props.isTutorial} onGuess={makeGuess} movieTitle={props.movieInfo.title} guesses={props.guesses} win={props.status === "WIN"} score={props.points} />
+        <Scorebar points={props.points} />
       </div>
       <ClueGrid isTutorial={props.isTutorial} clueSpecification={props.clueSpecification} onReveal={revealClue} reveals={props.clues} movie={props.movieInfo} showAll={props.status !== "UNFINISHED"} />
     </div>

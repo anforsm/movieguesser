@@ -162,8 +162,8 @@ function App() {
   //style={{ backgroundImage: `url(${movie.backdrop})` }} 
   return (
     <SettingsContext.Provider value={settings}>
-      <div id="app" className="bg-primary-900 min-h-screen max-h-screen h-full w-screen text-text-col overflow-auto relative">
-        <div className={`absolute full overflow-hidden`}><img src={settings.background} className="full object-cover blur-[1vh]" /></div>
+      <div id="app" className="bg-primary-900 min-h-screen max-h-screen h-full w-screen text-text-col overflow-y-auto relative overflow-x-hidden">
+        <div className={`absolute full overflow-hidden`}><img src={settings.background} className="full object-cover blur-[1vh] scale-125" alt="Background image" /></div>
         <Notifications notificationHandler={notificationHandler} />
         <Navbar
           onStats={() => showStats(true)}

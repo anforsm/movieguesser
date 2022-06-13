@@ -35,7 +35,6 @@ const animationDuration = 300;
 
 const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals, initialFlipDelay, gameOver, dontShowPointCostOnHover }: ClueProps) => {
   const firstRender = useFirstRender();
-  const [showPointCost, setShowPointCost] = useState(false);
   const [delayedReveals, setDelayedReveals] = useState(reveals);
   const [initialFlip, setInitialFlip] = useState(initialFlipDelay && reveals > 0 ? "PENDING" : "NOFLIP");
   const [initialRender, setInitialRender] = useState(false);
@@ -119,8 +118,55 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
     flipCard.current?.swap();
   }, [delayedReveals])
 
+  const [showPointCostForceDisabled, setShowPointCostForceDisabled] = useState(false)
+  const [showPointCostForceEnabled, setShowPointCostForceEnabled] = useState(false)
+  const [mouseOverClue, setMouseOverClue] = useState(false);
+  const [showPointCost, _setShowPointCost] = useState(false);
 
-  return <div {...bind} onMouseEnter={() => setShowPointCost(true)} onMouseLeave={() => setShowPointCost(false)} className={`clue full text-slate-50 shadow-2xl`} onClick={reveal} tabIndex={0}>
+  useEffect(() => {
+    if (!showPointCostForceDisabled)
+      setShowPointCost(mouseOverClue)
+
+    if (showPointCostForceDisabled)
+      _setShowPointCost(false)
+
+  }, [showPointCostForceDisabled, mouseOverClue])
+
+  useEffect(() => {
+    if (!showPointCostForceEnabled)
+      setShowPointCost(mouseOverClue)
+
+    if (showPointCostForceEnabled)
+      _setShowPointCost(true)
+
+  }, [showPointCostForceEnabled, mouseOverClue])
+
+  useEffect(() => {
+    setShowPointCost(mouseOverClue);
+  }, [mouseOverClue])
+
+  const setShowPointCost = (show: boolean) => {
+    if (!showPointCostForceDisabled && !showPointCostForceEnabled)
+      _setShowPointCost(show);
+  }
+
+
+  // _setMouseOverClue because react bug https://github.com/facebook/react/issues/19016
+  const [standardComponentProps, setStandardComponentProps] = useState({
+    value: value,
+    forceDisableShowPointCost: setShowPointCostForceDisabled,
+    _setMouseOverClue: setMouseOverClue
+  });
+  useEffect(() => {
+    setStandardComponentProps({
+      value: value,
+      forceDisableShowPointCost: setShowPointCostForceDisabled,
+      _setMouseOverClue: setMouseOverClue
+    })
+  }, [value]);
+
+
+  return <div {...bind} onMouseEnter={() => setMouseOverClue(true)} onMouseLeave={() => setMouseOverClue(false)} className={`clue full text-slate-50 shadow-2xl`} onClick={reveal} tabIndex={0}>
     {true && reveals !== maxReveals && <div className={`${showPointCost ? "pointCostShow" : "pointCostHide"} pointCost absolute z-10 full flex-center text-[4.5vh] bg-black/20 pointer-events-none`}>{!dontShowPointCostOnHover && `-${pointCost[delayedReveals]}`}</div>}
 
     <div className={`w-full h-full ${reveals !== maxReveals ? "cursor-pointer" : ""}`}>
@@ -160,11 +206,11 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           // if we want an initial flip, then the front side should be set to "gray"
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS") ?
             <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={0} gameOver={gameOver} />
+              <Component {...standardComponentProps} reveal={0} gameOver={gameOver} />
             </div>
             : // initialFlip === DONE or === NO FLIP
             <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={delayedReveals} gameOver={gameOver} />
+              <Component {...standardComponentProps} reveal={delayedReveals} gameOver={gameOver} />
             </div>
 
         }
@@ -176,18 +222,18 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           // if we want an initial flip, then the back side should be set as the correct side
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS" || initialFlip === "DONE") ?
             <div className={`w-full h-full ${colors[delayedReveals]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-              <Component value={value} reveal={delayedReveals} gameOver={gameOver} />
+              <Component {...standardComponentProps} reveal={delayedReveals} gameOver={gameOver} />
             </div>
             :
             // otherwise we want to show the normal, +1 side, given there is another side
             delayedReveals < maxReveals ?
               <div className={`w-full h-full ${colors[gameOver ? maxReveals : delayedReveals + 1]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-                <Component value={value} reveal={gameOver ? maxReveals : delayedReveals + 1} gameOver={gameOver} />
+                <Component {...standardComponentProps} reveal={gameOver ? maxReveals : delayedReveals + 1} gameOver={gameOver} />
               </div>
               :
               // if there is no other side, we use the gray side
               <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
-                <Component value={value} reveal={0} gameOver={gameOver} />
+                <Component {...standardComponentProps} reveal={0} gameOver={gameOver} />
               </div>
 
           /*
@@ -276,10 +322,13 @@ const FlipCard = forwardRef((props: any, ref) => {
 
 
 
+// _setMouseOverClue because react bug https://github.com/facebook/react/issues/19016
 interface ClueValProps {
   value: string,
   reveal: number,
   gameOver: boolean,
+  forceDisableShowPointCost: any,
+  _setMouseOverClue: any,
 }
 
 const Title = ({ value, reveal }: ClueValProps) => {
@@ -291,7 +340,7 @@ const Title = ({ value, reveal }: ClueValProps) => {
   }
   return <div className="full flex flex-col">
     <div className="label">Title</div>
-    <div className="flex-center grow"><span className={`text-[2.3vh] ${reveal >= 1 || 'hidden'}`}>{title}</span></div>
+    <div className="flex-center grow"><span className={`text-[1.5rem] md:text-[2.3vh] ${reveal >= 1 || 'hidden'}`}>{title}</span></div>
   </div>
 }
 
@@ -299,11 +348,12 @@ const Year = ({ value, reveal }: ClueValProps) => {
   // 6
   return <div className="full flex flex-col">
     <div className="label">Release year</div>
-    {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
+    {reveal >= 1 && <div className="flex-center grow"><span className="text-[4rem] md:text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
-const Poster = ({ value, reveal, gameOver }: ClueValProps) => {
+// _setMouseOverClue because react bug https://github.com/facebook/react/issues/19016
+const Poster = ({ value, reveal, gameOver, forceDisableShowPointCost, _setMouseOverClue }: ClueValProps) => {
   const poster_no_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters/${value}.jpg`
   const poster_medium_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_medium_blur/${value}_medium_blur.jpg`
   const poster_large_blur = `https://storage.googleapis.com/movieguesser-4997e.appspot.com/posters_large_blur/${value}_large_blur.jpg`
@@ -326,17 +376,19 @@ const Poster = ({ value, reveal, gameOver }: ClueValProps) => {
       <SettingsContext.Consumer>
         {settings => <>
           <EnlargedPoster {...enlargedPosterProps}>
-            <img className="h-[80vh] object-cover" src={getPosterImage(settings.toggleStates.posterblur)} />
+            <img className="h-[80vh] object-cover" src={getPosterImage(settings.toggleStates.posterblur)} alt="Zoomed in movie poster" />
           </EnlargedPoster>
           {settings.toggleStates.posterzoom &&
             <button
               className="enlarge-button absolute top-1 right-1 bg-black/60 hover:bg-black/60 text-white p-2 rounded-md cursor-pointer"
-              onClick={(e: any) => { e.stopPropagation(); showEnlargedPoster(true); }}
-              onMouseEnter={(e: any) => e.stopPropagation()}
+              onClick={(e: any) => { e.stopPropagation(); showEnlargedPoster(true); _setMouseOverClue(false) }}
+              onMouseEnter={() => forceDisableShowPointCost(true)}
+              onMouseLeave={() => forceDisableShowPointCost(false)}
+              title="Zoom in"
             >
               <ImEnlarge2 />
             </button>}
-          {reveal >= 1 && <img className="h-full w-full object-cover" src={getPosterImage(settings.toggleStates.posterblur)} />}
+          {reveal >= 1 && <img className="h-full w-full object-cover" src={getPosterImage(settings.toggleStates.posterblur)} alt="Movie poster" />}
         </>
         }
       </SettingsContext.Consumer>
@@ -347,14 +399,14 @@ const Poster = ({ value, reveal, gameOver }: ClueValProps) => {
 const Rating = ({ value, reveal }: ClueValProps) => {
   return <div className="full flex flex-col">
     <div className="label">Rating</div>
-    {reveal >= 1 && <div className="flex-center grow"><span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
+    {reveal >= 1 && <div className="flex-center grow"><span className="text-[4rem] md:text-[6vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
 const Director = ({ value, reveal }: ClueValProps) => {
   return <div className="full flex flex-col">
     <div className="label">Director</div>
-    {reveal >= 1 && <div className="flex-center flex-col grow"><span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
+    {reveal >= 1 && <div className="flex-center flex-col grow"><span className="text-[2rem] md:text-[3vh] leading-[0.95em] min-h-[1.1em]">{value}</span></div>}
   </div>
 }
 
@@ -370,8 +422,8 @@ const Budget = ({ value, reveal }: ClueValProps) => {
   return <div className="w-full h-full flex flex-col">
     <div className="label">Budget</div>
     {reveal >= 1 && <div className="flex-center flex-col grow">
-      <span className="text-[6vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.unit}{formattedBudget.number}</span>
-      <span className="text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix?.toUpperCase()}</span>
+      <span className="text-[4rem] md:text-[6vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.unit}{formattedBudget.number}</span>
+      <span className="text-[2rem] md:text-[3vh] leading-[0.95em] min-h-[1.1em]">{formattedBudget.suffix?.toUpperCase()}</span>
     </div>}
   </div>
 }
@@ -379,7 +431,7 @@ const Budget = ({ value, reveal }: ClueValProps) => {
 const Quote = ({ value, reveal }: ClueValProps) => {
   return <div className="bg-inherit">
     <div className="label">Quote</div>
-    {reveal >= 1 && <span className="text-[2.7vh] italic">"{value}"</span>}
+    {reveal >= 1 && <span className="text-[1.8rem] md:text-[2.7vh] italic">"{value}"</span>}
   </div>
 }
 
@@ -387,10 +439,10 @@ const Actor = (props: any) => {
   return <div className="overflow-hidden full flex items-center flex-col rounded-[1.2vh]">
     {props.reveal == 0 && <div className="label">Actor</div>}
     {props.reveal >= 1 && <span className="label">{props.value.name}</span>}
-    {props.reveal == 1 && <div className="flex-center grow"><span className="text-[10vh]">?</span></div>}
-    {props.reveal >= 2 && <img className="h-full w-full object-cover" src={props.value.image} />}
+    {props.reveal == 1 && <div className="flex-center grow"><span className="text-[6.7rem] md:text-[10vh]">?</span></div>}
+    {props.reveal >= 2 && <img className="h-full w-full object-cover" src={props.value.image} alt="Headshot of actor" />}
   </div>
 }
 
-export { Title, Year, Poster, Rating, Director, Writer, Budget, Quote, Actor }
+export { Title, Year, Poster, Rating, Director, Writer, Budget, Quote, Actor, FlipCard }
 export default Clue;

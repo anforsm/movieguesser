@@ -9,8 +9,11 @@ module.exports = {
   blue: "class",
   light: "class",
   theme: {
-    
+    fontFamily: {
+        "logo-font": ["Koulen", "Garamond"]
+      },
     extend: {
+  
       colors: {
         primary: {
           600: "var(--primary-600)",
@@ -20,6 +23,7 @@ module.exports = {
         },
 
         "text-col": "var(--text-col)",
+        "text-col-secondary": "var(--text-col-secondary)",
 
         clue: {
           gray: "var(--clue-gray)",

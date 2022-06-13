@@ -4,6 +4,8 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import loadSettings from "../utils/loadSettings";
 import Dropdown from "./dropdown";
 import Toggle from "./toggle";
+import IMDBLogo from "../images/imdb_logo.svg";
+import TMDBLogo from "../images/tmdb_logo.svg";
 const toggles = [{
   label: "Show unblurred poster after game over",
   short: "posterblur"
@@ -84,11 +86,26 @@ const Settings = (props: any) => {
       <ToggleGroup toggleStates={settings.toggleStates} toggles={toggles} onToggle={(shortName: string, val: boolean) => {
         props.settingsHandler.setToggleState(shortName, val)
       }} />
-      <div>&nbsp;</div>
+
+      <div className="w-full h-1">&nbsp;</div>
 
       <div className="w-full text-sm flex justify-center">
-        <span className="mx-2">Images from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></span>
-        <span className="mx-2">Today's movie on <a href={`https://www.imdb.com/title/${props.movieInfo.imdbID}`} target="_blank" rel="noopener">IMDb</a></span>
+        <div className=" w-1/3 mx-2 flex-center flex-col">
+          <span>Images from</span>
+          <div className="w-3/5"><a href="https://www.themoviedb.org/" target="_blank" rel="noopener"><img src={TMDBLogo} /></a></div>
+        </div>
+        <div className="w-1/3 mx-2 flex-center flex-col">
+          <span>Today's movie on</span>
+          <div className="w-3/5"><a href={`https://www.imdb.com/title/${props.movieInfo.imdbID}`} target="_blank" rel="noopener"><img src={IMDBLogo} /></a></div>
+        </div>
+      </div>
+
+      <div className="w-full h-1">&nbsp;</div>
+
+      <div className="w-full text-xs flex-center flex-col text-text-col-secondary">
+        <span>Version {localStorage.getItem("version")}</span>
+        <span>Inspired by <a href="https://www.powerlanguage.co.uk/">Josh Wardle</a>'s <a href="https://www.nytimes.com/games/wordle/index.html">Wordle</a>.</span>
+        <span>Send feedback to <a href="mailto:feedback@movieguesser.com">feedback@movieugesser.com</a></span>
       </div>
     </div>
   </>

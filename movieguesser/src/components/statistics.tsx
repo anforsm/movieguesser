@@ -3,6 +3,7 @@ import { Bar, BarChart, Dot, LabelList, Line, LineChart, PolarAngleAxis, PolarGr
 import { curveCardinal } from "d3-shape";
 import useLockBodyScroll from "../hooks/useLockBodyScroll";
 import { addSyntheticTrailingComment } from "typescript";
+import { FlipCard } from "./clue";
 const curveFunction = curveCardinal;
 
 const getTimeToNewDay = () => {
@@ -33,14 +34,14 @@ const CustomizedDot = (props: any) => {
   const { cx, cy, stroke, payload, value } = props;
 
   const dotSize = 5;
-  if (payload.visible) {
+  if (payload.visible && props.showTodaysScore) {
     //if (false) {
     return (
       //<g transform="translate(4 4)">
       //</g>
       <svg x={cx - dotSize} y={cy - dotSize} width={dotSize * 2} height={dotSize * 2} fill="white">
         <g transform={`translate(${dotSize} ${dotSize})`}>
-          <circle r={`${dotSize}`} fill="var(--secondary-700)" />
+          <circle r={`${dotSize}`} fill="var(--secondary-900)" />
         </g>
       </svg>
     );
@@ -87,15 +88,18 @@ const Statistics = (props: any) => {
   clueStats = Object.entries(clueStats)
   let maxReveals = clueStats.reduce((prevMax: number, clue: any) => Math.max(prevMax, clue[1]), 0);
   clueStats = clueStats.map((clue: any) => ({ "clue": clue[0][0].toUpperCase() + clue[0].slice(1), "reveals": clue[1], "revealFrac": clue[1] / maxReveals }));
+  console.log(clueStats)
   let playedDays = Object.keys(props.stats).length;
   let pointStats: any[] = [];
   for (let i = 0; i <= 100; i++) {
     pointStats.push({ "points": i, "probability": 0, "numTimes": 0 })
   }
+  let totalPoints = 0;
   const std = 4;
   const f = (x: number, mean: number) => Math.exp(-1 / 2 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
   Object.values(props.stats).forEach((stat: any) => {
     let points = 100 - Math.min(stat.points, 100);
+    totalPoints += points;
     const spread = 20;
     let minPoint = Math.max(0, points - spread);
     let maxPoint = Math.min(100, points + spread);
@@ -104,6 +108,7 @@ const Statistics = (props: any) => {
     }
     //pointStats[stat.points]["numTimes"]++
   });
+  const averagePoints = totalPoints / playedDays;
 
   let totalTimes = pointStats.reduce((currTimes, pointStat) => pointStat["numTimes"] + currTimes, 0)
   pointStats = pointStats.map(currPoint => ({
@@ -132,21 +137,28 @@ const Statistics = (props: any) => {
     </span>
     <div className="w-full h-4">&nbsp;</div>
 
-    <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} />
+    <SimpleTextStats wins={wins} games={games} maxStreak={maxStreak} currentStreak={currentStreak} averagePoints={averagePoints} />
 
     <div className="w-full h-4">&nbsp;</div>
 
     <span className="">
       Category distribution
     </span>
-    {true && <CategoryBarChart clueStats={clueStats} />}
-    {false && <CategoryRadarChart clueStats={clueStats} />}
+    <div className="w-full h-4">&nbsp;</div>
+    <div className="w-full">
+      <div className="w-3/4">
+        <CategoryBarChart clueStats={clueStats} />
+      </div>
+    </div>
 
-
-    <span className="">
+    {/*<span className="">
       Point distribution
     </span>
-    <PointDistributionLineChart points={props.points} pointStats={pointStats} />
+    <PointDistributionLineChart points={props.points} pointStats={pointStats} showTodaysScore={props.currentDay === lastDay} />
+  */}
+
+
+
 
     <div className="w-full h-4">&nbsp;</div>
 
@@ -169,18 +181,26 @@ const Statistics = (props: any) => {
 }
 
 const SimpleTextStats = (props: any) => {
-  let stats: any = []
-  const addStat = (label: string, value: any) => stats.push({ "label": label, "value": value });
-  addStat("Games", props.games);
-  addStat("Win Rate", (props.wins / props.games * 100).toFixed(0).toString() + "%");
-  addStat("Highest Streak", props.maxStreak);
-  addStat("Current Streak", props.currentStreak);
-  return <div className="w-full flex">
-    {stats.map((stat: any) =>
-      <div key={stat.label} className="flex-1 shadow-md m-2 p-1 rounded-md flex-center flex-col bg-primary-700 text-center">
-        <div className="text-2xl font-bold">{stat.value}</div>
-        <div className="text-xs flex-grow flex-center">{stat.label}</div>
-      </div>)}
+  let stats: any = [[], []];
+  const addStat = (label: string, value: any, row: number) => stats[row].push({ "label": label, "value": value });
+  // bg-primary-700
+  addStat("Games Played", props.games, 0);
+  addStat("Current Streak", props.currentStreak, 0);
+  addStat("Highest Streak", props.maxStreak, 0);
+  addStat("Average Points", props.averagePoints.toFixed(0).toString(), 0);
+  addStat("Win Rate", (props.wins / props.games * 100).toFixed(0).toString() + "%", 0);
+  //addStat("Win Rate", "." + (props.wins / props.games).toFixed(2).toString().split(".")[1], 0);
+  //<div className="w-full h-[1px] mb-1 bg-text-col"></div>
+  return <div className="w-3/4 flex-center flex-col">
+    {stats.map((row: any) => <div className="w-full flex-center">
+      {row.map((stat: any, id: number) =>
+        <div key={stat.label} className="flex-1 w-[6rem] shadow-md m-2 p-1 rounded-md flex-center flex-col text-center">
+          <div className="text-2xl font-bold ">{stat.value}</div>
+          {stat.label.split(" ").map((labelPart: string) => <div className={`text-xs flex-grow flex-center ${id == 4 && " ml-[-10px]"}`}>
+            {labelPart}
+          </div>)}
+        </div>)}
+    </div>)}
   </div>
   /*
   <div className="w-full flex">
@@ -224,7 +244,7 @@ const CategoryBarChart = (props: any) => (
     <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
       <XAxis type="number" axisLine={false} tick={false} />
       <YAxis type="category" dataKey="clue" tickLine={false} interval={0} tick={{ fill: "var(--text-col)" }} />
-      <Bar dataKey="revealFrac" fill="var(--secondary-700)" minPointSize={15} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
+      <Bar dataKey="revealFrac" fill="var(--secondary-900)" minPointSize={30} radius={[0, 5, 5, 0]} animationDuration={animationDuration}>
         <LabelList dataKey="reveals" position="insideRight" fill="white" />
       </Bar>
     </BarChart>
@@ -235,8 +255,8 @@ const PointDistributionLineChart = (props: any) => (
   <ResponsiveContainer height={200}>
     <LineChart data={props.pointStats}>
       <XAxis dataKey="points" domain={[0, 110]} ticks={[0, 20, 40, 60, 80, 100]} stroke="var(--text-col)" />
-      <Line type="basis" dataKey="probability" stroke="var(--text-col)" dot={<CustomizedDot />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
-      <ReferenceLine x={props.points} stroke="var(--secondary-700)" strokeWidth={strokeWidth} />
+      <Line type="basis" dataKey="probability" stroke="var(--text-col)" dot={<CustomizedDot showTodaysScore={props.showTodaysScore} />} strokeWidth={strokeWidth} animationDuration={animationDuration} />
+      {props.showTodaysScore && <ReferenceLine x={props.points} stroke="var(--secondary-900)" strokeWidth={strokeWidth} />}
     </LineChart>
   </ResponsiveContainer>
 )

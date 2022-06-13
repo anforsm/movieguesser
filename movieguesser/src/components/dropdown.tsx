@@ -10,7 +10,7 @@ const Dropdown = (props: any) => {
   useOnClickOutside(dropdownRef, () => setShowOptions(false));
 
   return <div ref={dropdownRef} className="relative min-w-[3em] inline-block">
-    <button onClick={() => setShowOptions(prev => !prev)} className="text-left flex items-center h-full">
+    <button onClick={() => setShowOptions(prev => !prev)} className="primary text-left flex items-center h-full">
       <span className="px-2 border-r-[1px] border-r-text-col">{currOption}</span>
       <span className="float-right px-1"><MdKeyboardArrowDown /></span>
     </button>

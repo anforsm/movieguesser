@@ -5,6 +5,7 @@ class SettingsHandler {
     this.settings = this.readSettingsFromLocal();
     this.writeSettingsToLocal();
     this.observers = [];
+    this.updateThemeColor();
   }
 
   setTheme(theme: string) {
@@ -12,7 +13,10 @@ class SettingsHandler {
       ...this.settings,
       theme: theme.toLowerCase()
     })
+    this.updateThemeColor()
+  }
 
+  updateThemeColor() {
     switch (this.settings.theme) {
       case "dark":
         document.documentElement.classList.add("dark")
@@ -30,6 +34,7 @@ class SettingsHandler {
         document.documentElement.classList.add("og")
         break;
     }
+
 
   }
 

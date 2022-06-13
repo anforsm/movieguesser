@@ -53,13 +53,13 @@ const GuessInputLine = (props: any) => {
   }, [inputFocused])
 
   return (
-    <div className={`w-full ${!props.isTutorial ? "grow" : ""} flex-center flex-col ${true ? "pb-4 md:pb-[0.5vh]" : ""} text-[1.5rem] md:text-[2vh]`}>
+    <div className={`w-full ${!props.isTutorial ? "grow" : ""} flex-center flex-col ${true ? "pb-4 md:pb-[0.5vh]" : ""} text-[1.5rem] md:text-[2vh] `}>
       {!props.isTutorial &&
         <div className={`${props.isTutorial ? "text-base" : ""}`}>
           {props.guesses == 0 && <span>&nbsp;</span>}
 
           {props.win && <span>You win! Congratulations! Score: {100 - props.score}/100</span>}
-          {props.guesses == 1 && !props.win && <><br /><span>You lose, the movie was {props.movieTitle}</span></>}
+          {props.guesses == 1 && !props.win && <span>You lose, the movie was {props.movieTitle}</span>}
         </div>
       }
       <div className="h-[7%] w-full text-[0]">&nbsp;</div>
@@ -67,10 +67,8 @@ const GuessInputLine = (props: any) => {
         <input
           ref={inputRef}
           onFocus={() => setInputFocused(true)}
-          onChange={e => { setCurrentTextInput(e.target.value); console.log("onchange") }}
-          onInput={e => { console.log(e) }}
+          onChange={e => setCurrentTextInput(e.target.value)}
           onKeyDown={e => {
-            console.log("keydown")
             if (e.key === "Enter") {
               inputRef.current.blur();
               onGuess();
@@ -97,7 +95,7 @@ const GuessInputLine = (props: any) => {
         />
 
 
-        {showSuggestions &&
+        {true &&
           <ul
             className="absolute bg-primary-700 left-0 w-[100%] md:w-[92%] rounded-md z-10 text-left top-[3.5rem] md:top-[3.8vh] overflow-y-hidden"
           >
@@ -109,7 +107,7 @@ const GuessInputLine = (props: any) => {
                   setCurrenGuess(title)
                 }}
                 onMouseEnter={() => setCurrentSuggestionIndex(i)}
-                className={`cursor-pointer ${i == currentSuggestionIndex ? "bg-primary-600" : ""} border-b border-b-primary-800 pl-[calc(0.25rem+0.6vh)]`}
+                className={`cursor-pointer ${i == currentSuggestionIndex ? "bg-primary-600" : ""} border-b border-b-primary-800 pl-[calc(0.25rem+0.6vh)] py-2 flex-center flex-col text-center`}
                 tabIndex={0}
               >
                 {title}
@@ -118,8 +116,9 @@ const GuessInputLine = (props: any) => {
         }
 
         <button
-          className="primary h-full flex-center aspect-[1.3/1] top-0 border-0 border-white"
+          className=" bg-slate-500 hover:bg-slate-400 h-full flex-center aspect-[1.3/1] md:aspect-[1.5/1] top-0 border-0 border-white"
           onClick={onGuess}
+          title="Make guess"
         >
           <AiOutlineArrowRight />
         </button>

@@ -16,6 +16,7 @@
 
 
     --text-col: theme("colors.slate[50]");
+    --text-col-secondary: theme("colors.neutral[500]");
   }
 
   .og {
@@ -65,7 +66,7 @@
   }
 
   .label {
-    @apply bg-black/40 w-full text-[1rem] md:text-[1.5vh] flex-center
+    @apply bg-black/40 w-full text-[1rem] md:text-[1.5vh] flex-center h-[1.2rem] md:h-[1.8vh]
   }
 }
 
