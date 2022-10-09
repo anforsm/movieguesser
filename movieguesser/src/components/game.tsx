@@ -48,9 +48,6 @@ const Game = (props: any) => {
 
     props.onNewGameState(newState);
   }
-  //min-h-[1000px]  w-[42rem]
-  //<div id="game" className="flex-center grow">
-  //</div>
   return (
     <div id="game" className={`bg-primary-800 text-center flex-center flex-col grow ${!props.isTutorial ? "aspect-[7/11]" : "aspect-[1/1.1]"} rounded-[2vh] mb-[1vh] shadow-2xl`}>
       <div className={`h-[15%] w-full flex-center flex-col`}>

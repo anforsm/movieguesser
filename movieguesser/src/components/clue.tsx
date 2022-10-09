@@ -87,29 +87,14 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
     } else {
       setTimeout(() => flipCard.current?.flip(), initialFlipDelay);
     }
-    //if (initialRender) {
-    //  // if the number of reveals have changed we want to start flip animation,
-    //  // and swap sides when flip animation is done (further down)
-    //  flipCard.current?.flip()
-    //}
-    //setTimeout(() => {
-    //}, animationDuration)
-    //setInitialRender(true)
   }, [reveals])
 
   useEffect(() => {
     if (firstRender) return;
 
     // if flip has changed from IN_PROGRESS to DONE,  we then swap the sides
-    /*
-    if (initialFlip === "DONE") {
-      flipCard.current?.swap()
-      console.log("swap after change to done")
-    }
-    */
-
     if (initialFlip === "DONE")
-      setTimeout(() => { ; flipCard.current?.swap() }, 10)
+      setTimeout(() => flipCard.current?.swap(), 10)
   }, [initialFlip])
 
   useEffect(() => {
@@ -183,26 +168,10 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
           } else {
             setDelayedReveals(reveals);
           }
-          /*
-          if (initialFlip === "IN PROGRESS") {
-            // if this was the initial flip, the backside and frontside were switched
-            // so we need to swap back
-            //flipCard.current?.swap();
-            setInitialFlip("DONE");
-            console.log("initial flip")
-          } else {
-            // if this was a normal flip, we want to update the reveals
-            // and swap sides
-            setDelayedReveals(reveals);
-            //flipCard.current?.swap();
-            console.log("flip done")
-          }
-            */
         }}
 
         // front side will always be the current side
         FrontSide={
-          //<span className=" bg-slate-800">Side One</span>
           // if we want an initial flip, then the front side should be set to "gray"
           (initialFlip === "PENDING" || initialFlip === "IN PROGRESS") ?
             <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
@@ -215,7 +184,6 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
 
         }
         BackSide={
-          //<span className="bg-slate-800">Side Two</span>
           // if not first flip (or no flip at all) and if we have another reveal, the backside should be the next reveal
 
           // back side will be the next reveal
@@ -235,31 +203,9 @@ const Clue = ({ clue, value, maxReveals, onReveal, Component, pointCost, reveals
               <div className={`w-full h-full ${colors[0]} ${reveals == 0 ? "overflow-hidden" : ""}`}>
                 <Component {...standardComponentProps} reveal={0} gameOver={gameOver} />
               </div>
-
-          /*
-          (initialFlip === "DONE") && delayedReveals + 1 <= maxReveals ?
-            <div className={`w-full h-full ${colors[delayedReveals + 1]}`}>
-              <Component value={value} reveal={delayedReveals + 1} />
-            </div>
-            :
-            <div className={`w-full h-full ${colors[0]}`}>
-              <Component value={value} reveal={0} />
-            </div>
-            */
-
         }
         animationDuration={animationDuration} />
     </div>
-    {/*
-      <div className={`face one ${colors[flipped ? reveals + 1 : reveals]}`}>
-        <Component value={value} reveal={flipped ? reveals + 1 : reveals} />
-      </div>
-
-      <div className={`face two overflow-hidden ${colors[flipped ? reveals : reveals + 1]}`}>
-        <Component value={value} reveal={flipped ? reveals : reveals + 1} />
-      </div>
-*/}
-
   </div>
 }
 
@@ -294,16 +240,6 @@ const FlipCard = forwardRef((props: any, ref) => {
       props.onSwap();
   }, [currentSwap])
 
-  /*
-  useEffect(() => {
-    if (props.initialFlip && !didInitialFlip) {
-      flipNswap();
-      setDidInitialFlip(true);
-    }
-  }, [props.initialFlip]);
-  */
-
-  //onClick={() => !props.disabled && flipNswap()}
   return (
     <div
       className={`content w-full h-full ${frontSide ? "" : "flip"} duration-300`}
@@ -365,8 +301,6 @@ const Poster = ({ value, reveal, gameOver, forceDisableShowPointCost, _setMouseO
       poster_no_blur :
       poster_medium_blur
     )
-
-  //{showEnlargePoster && <div className="fixed top-0 left-0"><img className="h-full w-full object-cover" src={poster_large_blur} /></div>}
 
   return <div className="overflow-hidden h-full rounded-[1.2vh]">
 

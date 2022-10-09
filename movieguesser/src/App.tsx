@@ -1,5 +1,5 @@
 import React, { createContext, ReactComponentElement, useEffect, useRef, useState } from 'react';
-import oldmovies from "./shuffled_titles";
+import movies from "./shuffled_titles";
 import Game from './components/game';
 import Statistics from './components/statistics';
 import Navbar from './components/navbar';
@@ -14,27 +14,8 @@ import loadSettings from './utils/loadSettings';
 import moment, { duration } from 'moment';
 import clueSpecification from './clueSpecification';
 import SettingsHandler from './models/settings';
-/*
-const movies = oldmovies.map(movie => {
-  let newMovie: any = { ...movie }
-  newMovie.poster = newMovie["image"];
-  delete newMovie.image
-  return newMovie;
-})
-*/
-const movies = oldmovies;
-
-
-let latestNotification = `Introducing:
-* New point costs (out of a total of 100)
-* A new category
-* Second guess for poster
-* Only ONE guess allowed`
 
 const daysPassed = (date: Date) => {
-  //let current = new Date(date.getTime()).getTime();
-  //let previous = new Date(2022, 0, 1).getTime();
-  //return Math.floor((current - previous) / 8.64e7);
   return -moment([2022, 0, 1]).diff(date, "days");
 }
 let currentDay = daysPassed(new Date());
@@ -89,7 +70,7 @@ if (!showtutorial_local) {
   showtutorial = true;
 }
 
-const latest_version = "0.11";
+const latest_version = "0.12";
 
 const version_local = localStorage.getItem("version");
 let showchanges = false;
@@ -107,16 +88,19 @@ const balanceChangeNoti = () => notificationHandler.sendCustomNotification(
     <ul className="list-disc text-left m-2">
       <li>Poster nerfed:</li>
       <ul className=" ml-2">
-        <li>Increased blur amount</li>
-        <li>Increased cost: 🟨: 10-&gt;15, 🟩: 10-&gt;15</li>
+        <li>Increased cost: 🟨: 15-&gt;20</li>
       </ul>
       <li>Actor buffed:</li>
       <ul className=" ml-2">
-        <li>Decreased cost: 🟨: 8-&gt;6, 🟩: 3-&gt;2</li>
+        <li>Decreased cost: 🟨: 6-&gt;5</li>
       </ul>
       <li>Quote buffed:</li>
       <ul className=" ml-2">
-        <li>Decreased cost: 🟩: 10-&gt;9</li>
+        <li>Decreased cost: 🟩: 9-&gt;8</li>
+      </ul>
+      <li>Director buffed:</li>
+      <ul className=" ml-2">
+        <li>Decreased cost: 🟩: 3-&gt;2</li>
       </ul>
     </ul>
   </div>
@@ -143,10 +127,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-  }, [settings])
-
-  useEffect(() => {
-    //notificationHandler.sendNotification(latestNotification, 10000);
     setGameOver(gameState.status !== "UNFINISHED")
   }, [gameState])
 
@@ -158,8 +138,6 @@ function App() {
     return () => settingsHandler.removeObserver(obs);
   }, [settingsHandler])
 
-  //onSetBackground={(bg: any) => setBackground(bg)}
-  //style={{ backgroundImage: `url(${movie.backdrop})` }} 
   return (
     <SettingsContext.Provider value={settings}>
       <div id="app" className="bg-primary-900 min-h-screen max-h-screen h-full w-screen text-text-col overflow-y-auto relative overflow-x-hidden">
@@ -195,18 +173,6 @@ function App() {
         <InfoModal {...infoProps}>
           <Info tutorialMovieInfo={movies[71]} />
         </InfoModal>
-
-        {/*showStats &&
-        <Statistics
-          onClose={() => setShowStats(false)}
-          stats={loadGameHistory()}
-          points={gameState.points}
-          currentDay={currentDay}
-          onShare={() => {
-            navigator.clipboard.writeText(generateShareString(gameState.clues, gameState.points))
-            notificationHandler.sendNotification("Copied results to clipboard")
-          }}
-        />*/}
 
         <div className="flex-center flex-col z-10">
           <Game

@@ -95,7 +95,7 @@ const GuessInputLine = (props: any) => {
         />
 
 
-        {true &&
+        {inputFocused &&
           <ul
             className="absolute bg-primary-700 left-0 w-[100%] md:w-[92%] rounded-md z-10 text-left top-[3.5rem] md:top-[3.8vh] overflow-y-hidden"
           >

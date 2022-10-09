@@ -12,13 +12,7 @@ const Notifications = (props: any) => {
         let notification = new Notification(thisID, newNotification.content, newNotification.duration, newNotification.autoClose, () => {
           setNotifications(prevNotifications => prevNotifications.filter(not => not.id !== thisID))
         })
-        //let notification = {
-        //  id: thisID,
-        //  content: newNotification.content,
-        //  autoClose: newNotification.autoClose,
-        //}
         setNotifications(prevNotifications => [notification, ...prevNotifications])
-        //setTimeout(() => , 2000);
         setID(prevID => prevID + 1);
       }
     }
@@ -32,14 +26,6 @@ const Notifications = (props: any) => {
 }
 
 const NotificationView = (props: any) => {
-  /*
-  const [closing, setClosing] = useState(false);
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    setTimeout(() => setClosing(true), 1500);
-    setTimeout(() => setVisible(false), 1600);
-  })
-  */
   const [close, setClose] = useState(false);
   useEffect(() => {
     if (props.notification.autoClose)

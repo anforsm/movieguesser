@@ -30,15 +30,13 @@ const TimeToNewDay = () => {
   </span>
 }
 
+// Dot for recharts graph
 const CustomizedDot = (props: any) => {
   const { cx, cy, stroke, payload, value } = props;
 
   const dotSize = 5;
   if (payload.visible && props.showTodaysScore) {
-    //if (false) {
     return (
-      //<g transform="translate(4 4)">
-      //</g>
       <svg x={cx - dotSize} y={cy - dotSize} width={dotSize * 2} height={dotSize * 2} fill="white">
         <g transform={`translate(${dotSize} ${dotSize})`}>
           <circle r={`${dotSize}`} fill="var(--secondary-900)" />
@@ -106,7 +104,6 @@ const Statistics = (props: any) => {
     for (let currPoint = minPoint; currPoint <= maxPoint; currPoint++) {
       pointStats[currPoint]["numTimes"] += f(currPoint, points);
     }
-    //pointStats[stat.points]["numTimes"]++
   });
   const averagePoints = totalPoints / playedDays;
 
@@ -118,18 +115,6 @@ const Statistics = (props: any) => {
     "visible": currPoint.points === props.points
   }));
 
-  //<input className="absolute left-0 top-0 m-2" type="radio" checked={experimental} onClick={() => setExperimental(exp => !exp)} readOnly={true} />
-  /*
-  return <div id="statisticsBG"
-    onClick={(e) => {
-      if (e.target === e.currentTarget) {
-        close()
-      }
-    }}
-    className={`absolute w-screen h-screen bg-black/50 flex-center top-0 z-20 ${closing ? "closing" : ""}`}
-  >
-    <div id="statistics" className={`bg-dark-900 rounded-lg w-[30rem] flex flex-col items-center p-8 text-white relative ${closing ? "closing" : ""}`}>
-    */
   return <>
 
     <span className="text-xl">
@@ -174,23 +159,16 @@ const Statistics = (props: any) => {
       </div>
     </div>
   </>
-  /*
-</div >
-</div >
-*/
 }
 
 const SimpleTextStats = (props: any) => {
   let stats: any = [[], []];
   const addStat = (label: string, value: any, row: number) => stats[row].push({ "label": label, "value": value });
-  // bg-primary-700
   addStat("Games Played", props.games, 0);
   addStat("Current Streak", props.currentStreak, 0);
   addStat("Highest Streak", props.maxStreak, 0);
   addStat("Average Points", props.averagePoints.toFixed(0).toString(), 0);
   addStat("Win Rate", (props.wins / props.games * 100).toFixed(0).toString() + "%", 0);
-  //addStat("Win Rate", "." + (props.wins / props.games).toFixed(2).toString().split(".")[1], 0);
-  //<div className="w-full h-[1px] mb-1 bg-text-col"></div>
   return <div className="w-3/4 flex-center flex-col">
     {stats.map((row: any) => <div className="w-full flex-center">
       {row.map((stat: any, id: number) =>
@@ -202,29 +180,6 @@ const SimpleTextStats = (props: any) => {
         </div>)}
     </div>)}
   </div>
-  /*
-  <div className="w-full flex">
-    <div className="flex-1">
-      <div>Games</div>
-      <div>{props.games}</div>
-    </div>
-
-    <div className="flex-1">
-      <div>Win rate</div>
-      <div>{(props.wins / props.games * 100).toFixed(0)}%</div>
-    </div>
-
-    <div className="flex-1">
-      <div>Highest streak</div>
-      <div>{props.maxStreak}</div>
-    </div>
-
-    <div className="flex-1">
-      <div>Current streak</div>
-      <div>{props.currentStreak}</div>
-    </div>
-  </div>
-  */
 }
 
 const animationDuration = 0;
@@ -260,7 +215,5 @@ const PointDistributionLineChart = (props: any) => (
     </LineChart>
   </ResponsiveContainer>
 )
-
-
 
 export default Statistics;

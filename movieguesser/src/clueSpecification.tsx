@@ -25,14 +25,14 @@ const addClue = (clueName: string, component: any, pointCost: number[], id: numb
 };
 
 addClue("title", Title, [10, 20])
-addClue("poster", Poster, [15, 15], -1, "imdbID")
+addClue("poster", Poster, [20, 15], -1, "imdbID")
 addClue("year", Year, [2])
 addClue("rating", Rating, [1])
-addClue("director", Director, [3])
+addClue("director", Director, [2])
 //addClue("writer", Writer, [8])
 addClue("budget", Budget, [1])
-addClue("quote", Quote, [9])
-const actorGuesses = [6, 2]
+addClue("quote", Quote, [8])
+const actorGuesses = [5, 2]
 addClue("actor", Actor, actorGuesses, 1)
 addClue("actor", Actor, actorGuesses, 2)
 addClue("actor", Actor, actorGuesses, 3)

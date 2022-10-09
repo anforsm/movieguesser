@@ -10,14 +10,6 @@ const toggles = [{
   label: "Show unblurred poster after game over",
   short: "posterblur"
 },
-//{
-//  label: "Show statistics after game over",
-//  short: "stats"
-//},
-//{
-//  label: "Show link to IMDb after game over",
-//  short: "imdb"
-//},
 {
   label: "Show button to enlarge poster",
   short: "posterzoom"
@@ -29,11 +21,6 @@ toggles.forEach(({ short }: { short: string, label: string }) => defaultToggleSt
 
 
 const Settings = (props: any) => {
-  //const [settings, setSettings] = useLocalStorage("settings", {
-  //  theme: "movieguesser",
-  //  background: "",
-  //  toggleStates: defaultToggleStates
-  //});
   const [settings, setSettings] = useState(props.settingsHandler.getSettings())
 
   useEffect(() => {
@@ -47,10 +34,6 @@ const Settings = (props: any) => {
 
 
   useEffect(() => {
-    //loadSettings(settings)
-    //console.log(settings)
-    //if (settings.background)
-    //  props.onSetBackground(props.movieInfo.backdrop);
   }, [settings])
 
   return <>
@@ -102,10 +85,11 @@ const Settings = (props: any) => {
 
       <div className="w-full h-1">&nbsp;</div>
 
-      <div className="w-full text-xs flex-center flex-col text-text-col-secondary">
+      <div className="w-full text-xs flex-center flex-col text-text-col-secondary gap-1">
+        <span>See more of my work at <a href="https://anforsm.com" target="_blank">anforsm.com</a></span>
+        <span>Send feedback to <a href="mailto:feedback@movieguesser.com" target="_blank">feedback@movieugesser.com</a></span>
+        <span>Inspired by <a href="https://www.powerlanguage.co.uk/" target="_blank">Josh Wardle</a>'s <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank">Wordle</a>.</span>
         <span>Version {localStorage.getItem("version")}</span>
-        <span>Inspired by <a href="https://www.powerlanguage.co.uk/">Josh Wardle</a>'s <a href="https://www.nytimes.com/games/wordle/index.html">Wordle</a>.</span>
-        <span>Send feedback to <a href="mailto:feedback@movieguesser.com">feedback@movieugesser.com</a></span>
       </div>
     </div>
   </>
