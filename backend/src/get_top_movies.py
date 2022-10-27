@@ -14,18 +14,17 @@ top_titles = titles[titles.tconst.isin(top_ratings)]
 top_titles = top_titles[top_titles.titleType == "movie"]
 top_titles = top_titles[["tconst", "primaryTitle"]]
 
-print(top_titles)
 formatted_titles = []
 only_titles = []
 for i, title in top_titles.iterrows():
-  formatted_titles.append({
-    "imdbId": title.tconst,
-    "title": title.primaryTitle
-  })
-  only_titles.append(title.primaryTitle)
+    formatted_titles.append({
+        "imdbId": title.tconst,
+        "title": title.primaryTitle
+    })
+    only_titles.append(title.primaryTitle)
 
 with open("titles.json", "w") as f:
-  f.write(json.dumps(only_titles))
+    f.write(json.dumps(only_titles))
 
 with open("titles_and_info.json", "w") as f:
-  f.write(json.dumps(formatted_titles))
+    f.write(json.dumps(formatted_titles))

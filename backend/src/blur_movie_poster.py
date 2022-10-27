@@ -2,11 +2,6 @@ from PIL import Image, ImageFilter
 
 
 def main():
-    #image = Image.open("test/tt1951264.jpg", "r")
-    # green = 10
-    # yellow = 20
-    #image = image.filter(ImageFilter.GaussianBlur(radius=20))
-    # image.show()
     create_blurred_versions("tt1843866")
 
 
