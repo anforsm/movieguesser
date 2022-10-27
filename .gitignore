@@ -106,9 +106,6 @@ dist
 .firebase
 
 #datasources
-*.tsv
-
-*.json
 
 __pycache__/
 actors/
