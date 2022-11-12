@@ -111,3 +111,6 @@ __pycache__/
 actors/
 backdrops/
 poster*/
+backend/src/api_config.json
+backend/data/
+backend/data_old/
