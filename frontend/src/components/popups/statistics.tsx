@@ -18,7 +18,15 @@ import {
 } from "recharts";
 import { curveCardinal } from "d3-shape";
 import useLockBodyScroll from "hooks/useLockBodyScroll";
+import clueSpecification from "clueSpecification";
+
 const curveFunction = curveCardinal;
+
+let currentCategories = new Set(
+  Object.keys(clueSpecification).map((key) => {
+    return clueSpecification[key].clue;
+  })
+);
 
 const getTimeToNewDay = () => {
   let d = new Date();
@@ -104,6 +112,7 @@ const Statistics = (props: any) => {
     });
   });
   clueStats = Object.entries(clueStats);
+  clueStats = clueStats.filter((entry: any) => currentCategories.has(entry[0]));
   let maxReveals = clueStats.reduce(
     (prevMax: number, clue: any) => Math.max(prevMax, clue[1]),
     0
@@ -162,25 +171,36 @@ const Statistics = (props: any) => {
 
       <div className="h-4 w-full">&nbsp;</div>
 
-      <span className="">Category distribution</span>
-      <div className="h-4 w-full">&nbsp;</div>
-      <div className="w-full">
-        <div className="w-3/4">
-          <CategoryBarChart clueStats={clueStats} />
-        </div>
+      <div className="h-[17rem] w-full">
+        <Page
+          pages={[
+            <div className="flex-center w-full flex-col">
+              <span className="">Category Distribution</span>
+              <div className="h-4 w-full">&nbsp;</div>
+              <div className="w-3/4">
+                <CategoryBarChart clueStats={clueStats} />
+              </div>
+            </div>,
+            <div className="flex-center w-full flex-col">
+              <span className="">Point Distribution</span>
+              <div className="h-4 w-full">&nbsp;</div>
+              <div className="w-3/4">
+                <PointDistributionLineChart
+                  points={props.points}
+                  pointStats={pointStats}
+                  showTodaysScore={props.currentDay === lastDay}
+                />
+              </div>
+            </div>,
+          ]}
+        />
       </div>
 
-      {/*<span className="">
-      Point distribution
-    </span>
-    <PointDistributionLineChart points={props.points} pointStats={pointStats} showTodaysScore={props.currentDay === lastDay} />
-  */}
-
-      <div className="h-4 w-full">&nbsp;</div>
+      <div className="h-8 w-full">&nbsp;</div>
 
       <div className="h-[100px] w-full">
         <div className="flex-center float-left h-full w-1/2 flex-col border-r-[1px] border-text-col">
-          <div className="">Next movie in </div>
+          <div className="">Next Movie In </div>
           <br />
           <TimeToNewDay />
         </div>
@@ -251,9 +271,14 @@ const CategoryRadarChart = (props: any) => (
 );
 
 const CategoryBarChart = (props: any) => (
-  <ResponsiveContainer height={230}>
-    <BarChart data={props.clueStats} layout="vertical" barCategoryGap={0.9}>
-      <XAxis type="number" axisLine={false} tick={false} />
+  <ResponsiveContainer height={200}>
+    <BarChart
+      data={props.clueStats}
+      layout="vertical"
+      barCategoryGap={0.9}
+      height={400}
+    >
+      <XAxis type="number" axisLine={false} tick={false} height={0} />
       <YAxis
         type="category"
         dataKey="clue"
@@ -302,5 +327,75 @@ const PointDistributionLineChart = (props: any) => (
     </LineChart>
   </ResponsiveContainer>
 );
+
+const Page = (props: any) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageXOffset, setPageXOffset] = useState(0);
+
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: any) => {
+    setTouchEnd(0);
+    setTouchStart(e.touches[0].clientX);
+    setPageXOffset(0);
+  };
+
+  const onTouchMove = (e: any) => {
+    setPageXOffset(Math.round((e.touches[0].clientX - touchStart) / 10) * 10);
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const onTouchEnd = (e: any) => {
+    if (!touchStart || !touchEnd) return;
+
+    if (Math.abs(touchStart - touchEnd) > minSwipeDistance) {
+      setCurrentPage((prev) => (prev + 1) % 2);
+      setPageXOffset(0);
+    }
+  };
+
+  return (
+    <div className="flex-center h-full w-full flex-col">
+      <div className="flex w-full grow flex-col overflow-x-hidden">
+        <div
+          className="flex-center relative h-full transition-all"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          style={{
+            width: 100 * props.pages.length + "%",
+            left:
+              "calc(" + currentPage * -100 + "%" + " + " + pageXOffset + "px)",
+          }}
+        >
+          {props.pages.map((page: any, id: number) => (
+            <div
+              key={id}
+              className={`h-full`}
+              style={{ width: 100 / props.pages.length + "%" }}
+            >
+              {page}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex-center w-full">
+        {props.pages.map((page: any, id: number) => (
+          <button
+            className={`m-1 aspect-square h-[0.65rem] rounded-full transition-all ${
+              id == currentPage
+                ? "scale-150 bg-text-col"
+                : "bg-text-col-secondary"
+            }`}
+            onClick={() => setCurrentPage(id)}
+          ></button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default Statistics;

@@ -83,7 +83,7 @@ if (!showtutorial_local) {
   showtutorial = true;
 }
 
-const latest_version = "0.12";
+const latest_version = "0.13";
 
 const version_local = localStorage.getItem("version");
 let showchanges = false;
@@ -94,7 +94,8 @@ let version = version_local ? version_local : latest_version;
 // update version to latest
 localStorage.setItem("version", latest_version);
 
-const balanceChangeNoti = () =>
+const balanceChangeNoti = () => {
+  return;
   notificationHandler.sendCustomNotification(
     <div>
       <p className="font-bold">New balance changes:</p>
@@ -120,6 +121,7 @@ const balanceChangeNoti = () =>
     2000,
     false
   );
+};
 
 function App() {
   const [showStats, StatsModal, statsProps] = useModal(MenuModal);
