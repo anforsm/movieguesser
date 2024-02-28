@@ -83,7 +83,7 @@ if (!showtutorial_local) {
   showtutorial = true;
 }
 
-const latest_version = "0.13";
+const latest_version = "0.14";
 
 const version_local = localStorage.getItem("version");
 let showchanges = false;
@@ -95,26 +95,25 @@ let version = version_local ? version_local : latest_version;
 localStorage.setItem("version", latest_version);
 
 const balanceChangeNoti = () => {
-  return;
   notificationHandler.sendCustomNotification(
     <div>
       <p className="font-bold">New balance changes:</p>
       <ul className="m-2 list-disc text-left">
         <li>Poster nerfed:</li>
         <ul className=" ml-2">
-          <li>Increased cost: 🟨: 15-&gt;20</li>
+          <li>Increased cost: 🟨: 20-&gt;25</li>
         </ul>
-        <li>Actor buffed:</li>
+        <li>Year nerfed:</li>
         <ul className=" ml-2">
-          <li>Decreased cost: 🟨: 6-&gt;5</li>
+          <li>Increased cost: 🟩: 2-&gt;3</li>
         </ul>
-        <li>Quote buffed:</li>
+        <li>Actor 2 &amp; 3 buffed:</li>
         <ul className=" ml-2">
-          <li>Decreased cost: 🟩: 9-&gt;8</li>
+          <li>Decreased cost: 🟩: 5-&gt;3</li>
         </ul>
-        <li>Director buffed:</li>
+        <li>Actor 1, 2, &amp; 3 buffed:</li>
         <ul className=" ml-2">
-          <li>Decreased cost: 🟩: 3-&gt;2</li>
+          <li>Decreased cost: 🟨: 2-&gt;1</li>
         </ul>
       </ul>
     </div>,

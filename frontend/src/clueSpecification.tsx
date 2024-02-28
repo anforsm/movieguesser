@@ -41,17 +41,17 @@ const addClue = (
 };
 
 addClue("title", Title, [10, 20]);
-addClue("poster", Poster, [20, 15], -1, "imdbID");
-addClue("year", Year, [2]);
+addClue("poster", Poster, [25, 15], -1, "imdbID");
+addClue("year", Year, [3]);
 addClue("rating", Rating, [1]);
 addClue("director", Director, [2]);
 //addClue("writer", Writer, [8])
 addClue("budget", Budget, [1]);
 addClue("quote", Quote, [8]);
 const actorGuesses = [5, 2];
-addClue("actor", Actor, actorGuesses, 1);
-addClue("actor", Actor, actorGuesses, 2);
-addClue("actor", Actor, actorGuesses, 3);
+addClue("actor", Actor, [5, 1], 1);
+addClue("actor", Actor, [3, 1], 2);
+addClue("actor", Actor, [3, 1], 3);
 
 let total = Object.values(clueSpecification).reduce(
   (prev, current: any) =>
