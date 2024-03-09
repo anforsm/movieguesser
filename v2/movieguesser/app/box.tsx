@@ -61,7 +61,7 @@ const Box = (props: any) => {
           <Text color={"white"} fontSize={1} position={[0, 5.5, 0]}>
             Poster
           </Text>
-          <Text color={"white"} fontSize={hovered ? 3 : 0} position={[0, 0, 0]}>
+          <Text color={"white"} fontSize={3} visible={hovered} position={[0, 0, 0]}>
             -25
           </Text>
         </mesh>
