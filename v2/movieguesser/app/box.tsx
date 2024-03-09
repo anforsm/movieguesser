@@ -7,7 +7,6 @@ import { TextureLoader } from 'three'
 import { Image, Text } from '@react-three/drei';
 
 const Box = (props: any) => {
-  const texture = useLoader(TextureLoader, 'http://localhost:3000/dun2.jpg')
   // Rotate in y when clicked
   // This reference will give us direct access to the mesh
   const meshRef = useRef()
