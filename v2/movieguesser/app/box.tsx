@@ -78,6 +78,7 @@ const Box = (props: any) => {
           </Text>
           <Image
             position={[0, -0.5, 0]}
+            // @ts-ignore
             scale={[8, 11, 0.5]}
             url={'http://localhost:3000/dun2.jpg'}
           />
