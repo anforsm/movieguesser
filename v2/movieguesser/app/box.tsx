@@ -1,41 +1,111 @@
 "use client";
 import { createRoot } from 'react-dom/client'
 import React, { useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader, extend } from '@react-three/fiber'
 import { useSpring, animated } from '@react-spring/three'
 import { TextureLoader } from 'three'
 import { Image, Text } from '@react-three/drei';
+import { easing, geometry } from 'maath'
+import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
+extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
+
+const BoxFace = (props: any) => {
+    let [xs, ys, zs] = props.scale;
+    let [x, y, z] = props.position;
+    console.log(Math.round(y/2));
+    let positive_z = z > 0 ? 1 : -1;
+
+    return <mesh
+        scale={[props.flipped ? -1 : 1, 1, 1]}
+        position={props.position}>
+
+        <meshBasicMaterial color={props.color} />
+        {/* @ts-ignore*/}
+        <boxGeometry args={props.scale} />
+
+        <mesh
+          position={[0, 0, z]}
+          scale={[1, 1, 0.01]}
+          >
+
+          <Text color={"white"} fontSize={0.5} position={[0, (ys - 0.5) / 2, 0]}>
+            {props.name}
+          </Text>
+          {/*<Text color={"white"} fontSize={1} visible={props.hovered} position={[0, 0, 0]}>
+            -25
+          </Text>*/}
+          {props.image && <Image
+            toneMapped={false}
+            position={[0, -0.5, 0]}
+            // @ts-ignore
+            scale={props.scale}
+            url={props.image}
+          >
+          {props.text && <Text>{props.text}</Text>}
+
+          </Image>}
+        </mesh>
+      </mesh>
+}
+
+const rotationFreezeTime = 500
 
 const Box = (props: any) => {
+  let [x, y, z] = props.scale;
+  let positive_z = z > 0 ? 1 : -1;
   // Rotate in y when clicked
   // This reference will give us direct access to the mesh
   const meshRef = useRef()
-  // Set up state for the hovered and active state
   const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
+  const [canFlip, setCanFlip] = useState(true)
+  const [currRotation, setCurrRotation] = useState(0)
+  const [laggedRotation, setLaggedRotation] = useState(0)
 
-  //const { scale } = useSpring({ scale: active ? 1.5 : 1 })
-  const { rotation } = useSpring({ rotation: active ? [0, Math.PI, 0] : [0, 0, 0] })
+
+  //const { rotation } = useSpring({ rotation: active ? [0, currRotation + Math.PI, 0] : [0, currRotation, 0] })
+  const { rotation } = useSpring({ rotation: [0, currRotation, 0]})
+
+  const [currFaceI, setCurrFaceI] = useState(0);
+
+  const faces = [
+    (front: boolean) => <BoxFace scale={props.scale} position={[0, 0, front ? z : -z]} color={"#475569"} hovered={hovered} flipped={!front} name={props.name} />,
+    (front: boolean) => <BoxFace scale={props.scale} position={[0, 0, front ? z : -z]} color={"#c9b458"} hovered={hovered} flipped={!front} image={props.image} name={props.name} />,
+    (front: boolean) => <BoxFace scale={props.scale} position={[0, 0, front ? z : -z]} color={"#40663c"} hovered={hovered} flipped={!front} image={props.image} name={props.name} />,
+  ]
+
+  const [frontSide, setFrontSide] = useState(faces[currFaceI](true))
+  const [backSide, setBackSide] = useState(faces[currFaceI+1](false))
 
   useEffect(() => {
     // Set pointer cursor when hovered
-    if (hovered) document.body.style.cursor = 'pointer'
+    if (hovered && canFlip) document.body.style.cursor = 'pointer'
     else document.body.style.cursor = 'auto'
-  }, [hovered])
-
-
-
+  }, [hovered, canFlip])
 
   const flip = () => {
-    setActive(!active)
-    //if (!meshRef.current) return
-    ////@ts-ignore
-    //meshRef.current.rotation.y += Math.PI / 2
+    if (!canFlip) return
+    setCurrRotation((currRotation + Math.PI) % (2 * Math.PI))
+    setCanFlip(false)
+    setTimeout(() => {
+      //setLaggedRotation(currRotation)
+      setCanFlip(true)
+      setCurrFaceI((currFaceI + 1) % (faces.length - 1))
+    }, rotationFreezeTime);
   }
-  //@ts-ignore
-  //useFrame((state, delta) => (meshRef.current.rotation.y += delta))
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  // Return view, these are regular three.js elements expressed in JSX
+
+  useEffect(() => {
+    if (currFaceI % 2 === 1) {
+      setFrontSide(faces[currFaceI + 1](true))
+    }
+    if (currFaceI % 2 === 0) {
+      setBackSide(faces[currFaceI + 1](false))
+    }
+    //setFrontSide(faces[currFaceI](true))
+    //setBackSide(faces[currFaceI+1](false))
+  }, [currFaceI])
+
+
+
   return (
     <animated.mesh
   // @ts-ignore
@@ -46,54 +116,30 @@ const Box = (props: any) => {
       onClick={(event) => flip()}
       onPointerOver={(event) => setHover(true)}
       onPointerOut={(event) => setHover(false)}>
-      <meshBasicMaterial color={"#40663c"} />
 
-      <mesh
-        scale={[-1, 1, 1]}
-        position={[0, 0, -0.51]}>
+      {frontSide}
+      {backSide}
 
-        <meshBasicMaterial color={"#475569"} />
-        <boxGeometry args={[8, 12, 0.5]} />
-
-        <mesh
-        position={[0, 0, -0.52]}>
-          <Text color={"white"} fontSize={1} position={[0, 5.5, 0]}>
-            Poster
-          </Text>
-          <Text color={"white"} fontSize={3} visible={hovered} position={[0, 0, 0]}>
-            -25
-          </Text>
-        </mesh>
-      </mesh>
-
-      <mesh
-        position={[0, 0, 0.51]}>
-        <meshBasicMaterial color={"#40663c"} />
-        <boxGeometry args={[8, 12, 1]} />
-        <mesh
-        position={[0, 0, 0.52]}>
-          <Text color={"white"} fontSize={1} position={[0, 5.5, 0]}>
-            Poster
-          </Text>
-          <Image
-            position={[0, -0.5, 0]}
-            // @ts-ignore
-            scale={[8, 11, 0.5]}
-            url={'/dun2.jpg'}
-          />
-        </mesh>
-      </mesh>
     </animated.mesh>
   )
 }
 
-const Container = (props: any) => {
+const Poster = (props: any) => {
   const canvasRef = useRef()
   return <div className="h-[32rem]">
     <Canvas>
-      <Box position={[0, 0, 0]} />
+      <Box position={[0, 0, 0]}  scale={[4, 6, 0.3]} image={"/lotr.jpg"} name={"Poster"}/>
     </Canvas>
   </div>
 }
 
-export default Container
+const Title = (props: any) => {
+  const canvasRef = useRef()
+  return <div className="h-[32rem]">
+    <Canvas>
+      <Box position={[0, 0, 0]} scale={[10, 2, 0.3]} text="Lord of the Rings" name={"Title"}/>
+    </Canvas>
+  </div>
+}
+
+export { Poster, Title }

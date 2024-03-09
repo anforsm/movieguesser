@@ -1,10 +1,11 @@
 import Image from "next/image";
-import Container from "./box";
+import { Poster, Title } from "./box";
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-24 bg-[#0f172a]">
-      <Container/>
+    <main className="min-h-screen py-24 bg-[#0f172a]">
+      <Poster/>
+      <Title/>
     </main>
   );
 }
