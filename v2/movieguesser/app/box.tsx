@@ -63,7 +63,7 @@ const Box = (props: any) => {
 
 
   //const { rotation } = useSpring({ rotation: active ? [0, currRotation + Math.PI, 0] : [0, currRotation, 0] })
-  const { rotation } = useSpring({ rotation: [0, currRotation, 0]})
+  const { rotation } = useSpring({ rotation: [props.horizontalRot ? currRotation: 0, props.horizontalRot ? 0 : currRotation, 0]})
 
   const [currFaceI, setCurrFaceI] = useState(0);
 
@@ -128,7 +128,7 @@ const Poster = (props: any) => {
   const canvasRef = useRef()
   return <div className="h-[32rem]">
     <Canvas>
-      <Box position={[0, 0, 0]}  scale={[4, 6, 0.3]} image={"/lotr.jpg"} name={"Poster"}/>
+      <Box position={[0, 0, 0]}  scale={[4, 6, 0.3]} image={"/lotr.jpg"} name={"Poster"} horizontalRot={false}/>
     </Canvas>
   </div>
 }
@@ -137,7 +137,7 @@ const Title = (props: any) => {
   const canvasRef = useRef()
   return <div className="h-[32rem]">
     <Canvas>
-      <Box position={[0, 0, 0]} scale={[10, 2, 0.3]} text="Lord of the Rings" name={"Title"}/>
+      <Box position={[0, 0, 0]} scale={[10, 2, 0.3]} text="Lord of the Rings" name={"Title"} horizontalRot={true}/>
     </Canvas>
   </div>
 }
