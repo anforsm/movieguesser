@@ -67,6 +67,7 @@ const Box = (props: any) => {
   const [hovered, setHover] = useState(false)
   const [canFlip, setCanFlip] = useState(true)
   const [currRotation, setCurrRotation] = useState(0.8)
+  const [frontVisible, setFrontVisible] = useState(true)
 
 
   //const { rotation } = useSpring({ rotation: active ? [0, currRotation + Math.PI, 0] : [0, currRotation, 0] })
@@ -100,14 +101,17 @@ const Box = (props: any) => {
       //setLaggedRotation(currRotation)
       setCanFlip(true)
       setCurrFaceI(getNextFace(currFaceI))
+      setFrontVisible(!frontVisible)
     }, rotationFreezeTime);
   }
 
   useEffect(() => {
-    if (currFaceI % 2 === 1) {
+    // Swap out frontside if the front is not visible
+    if (!frontVisible) {
       setFrontSide(faces[getNextFace(currFaceI)](true))
     }
-    if (currFaceI % 2 === 0) {
+    // Swap out backside if the front is visible
+    if (frontVisible) {
       setBackSide(faces[getNextFace(currFaceI)](false))
     }
     //setFrontSide(faces[currFaceI](true))
