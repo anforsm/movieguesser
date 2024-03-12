@@ -5,8 +5,8 @@ import TileFace from "./tileface";
 
 const Info = (props: any) => {
   return <Tile 
-      position={props.position} 
-      size={[3, 2.5, props.thickness]}
+      position={[...props.position, 0]} 
+      size={[...props.size, props.thickness]}
       name={props.name} 
       horizontalRot={false}>
 

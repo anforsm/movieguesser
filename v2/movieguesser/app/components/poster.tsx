@@ -5,8 +5,8 @@ import TileFace from "./tileface";
 
 const Poster = (props: any) => {
   return <Tile 
-      position={props.position} 
-      size={[4, 6, props.thickness]}
+      position={[...props.position, 0]} 
+      size={[...props.size, props.thickness]}
       name={"Poster"} 
       horizontalRot={false}>
 

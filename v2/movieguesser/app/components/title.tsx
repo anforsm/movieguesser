@@ -4,8 +4,8 @@ import TileFace from "./tileface"
 
 const Title = (props: any) => {
   return <Tile 
-      position={props.position} 
-      size={[12, 3, props.thickness]}
+      position={[...props.position, 0]} 
+      size={[...props.size, props.thickness]}
       name={"Title"} 
       horizontalRot={true}>
 

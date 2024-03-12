@@ -3,6 +3,7 @@ import { Image, Text } from "@react-three/drei";
 
 const h = 0.01
 const CARD_THICKNESS=0.2
+const margin = 0.2
 
 const HEADER_HEIGHT = 0.5
 
@@ -12,12 +13,14 @@ const TileFace = (props: any) => {
     //let positive_z = z > 0 ? 1 : -1;
     //let h_ = h * positive_z;
     let mul = props.flipped ? -1 : 1;
+    let scale_mul = [(xs - margin)/xs, (ys - margin)/ys, 1]
+    let [xsm, ysm, zsm] = scale_mul
 
     return <group
         scale={[
-          props.flipped && !props.horizontalRot ? -1 : 1, 
-          props.flipped && props.horizontalRot ? -1 : 1, 
-          props.flipped ? -1 : 1]
+          (props.flipped && !props.horizontalRot ? -1 : 1) * xsm, 
+          (props.flipped && props.horizontalRot ? -1 : 1) * ysm, 
+          (props.flipped ? -1 : 1) * zsm]
         }
         position={[x, y, z*mul]}>
 
