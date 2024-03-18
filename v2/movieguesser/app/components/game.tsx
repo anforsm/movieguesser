@@ -99,10 +99,12 @@ const Game = (props: any) => {
       })
     })
   }
-  return <div className="h-screen w-screen">
+  return <div className="h-[70vh] max-w-[90vw] aspect-[2/3]">
     <Canvas gl={{toneMapping: NoToneMapping}}>
-      <OrthographicCamera makeDefault position={[num_cols/4, -num_rows/4, 10]} zoom={80}/>
-      {createTiles(layout)}
+      <Bounds fit clip observe maxDuration={0} margin={1}>
+        <OrthographicCamera makeDefault position={[num_cols/4, -num_rows/4, 10]}/>
+        {createTiles(layout)}
+      </Bounds>
     </Canvas>
   </div>
 }
