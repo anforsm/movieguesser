@@ -1,17 +1,22 @@
 "use client";
-import Game3D from "./3d_game";
+import { Canvas } from "@react-three/fiber";
 import GuessBox from "./guessbox";
+import Score from "./score";
+import CoreGame from "./core_game";
 
 
 
 const Game = (props: any) => {
 
   return <div className="flex justify-center items-center flex-col bg-primary-800 p-4 grow">
-    <div className="h-14 w-full">
+    {/* <div className="h-14 w-full">
       <GuessBox/>
+    </div> */}
+    <div className="w-full h-16">
+      <Score/>
     </div>
     <div className="grow">
-      <Game3D/>
+      <CoreGame/>
     </div>
   </div>
 }

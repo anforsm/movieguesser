@@ -9,6 +9,8 @@ import Quote from "./quote";
 import Actor from "./actor";
 import { cloneElement } from "react";
 import GuessBox from "./guessbox";
+import Score from "./score";
+
 
 const CARD_THICKNESS = 0.2;
 const layout = `
@@ -71,7 +73,7 @@ const getTileSizeAndPosition = (tile_index: number, layout: string) => {
   return [[xe-xs, ye-ys], [((xe-xs)/2 + xs)/2, -((ye-ys)/2 + ys)/2]]
 }
 
-const Game3D = (props: any) => {
+const CoreGame = (props: any) => {
 
 
   const createTiles = (layout: any) => {
@@ -106,4 +108,4 @@ const Game3D = (props: any) => {
   </div>
 }
 
-export default Game3D;
+export default CoreGame;
