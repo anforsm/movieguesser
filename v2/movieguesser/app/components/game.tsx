@@ -9,10 +9,6 @@ import Quote from "./quote";
 import Actor from "./actor";
 import { cloneElement } from "react";
 
-const interpolateFunc = (t: number) => 1 - Math.exp(-5 * t) + 0.007 * t // Matches the default Bounds behavior
-//<Title thickness={CARD_THICKNESS} position={[0, 0, 0]}/>
-//<Bounds fit clip observe margin={1.2} maxDuration={1} interpolateFunc={interpolateFunc}></Bounds>
-
 const CARD_THICKNESS = 0.2;
 const layout = `
 000000000000
