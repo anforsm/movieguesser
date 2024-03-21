@@ -16,12 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="relative h-full max-h-screen min-h-screen w-screen overflow-y-auto overflow-x-hidden bg-primary-900 text-text-col">
-          <Navbar/>
+    <html lang="en" className="og">
+      <body className={inter.className + " bg-primary-900"}>
+        <div className="relative h-screen min-h-screen w-screen overflow-y-auto overflow-x-hidden bg-primary-900 text-text-col flex flex-col justify-center">
+          <div className="h-[2rem]">
+            <Navbar/>
+          </div>
 
-          <div className="flex-center z-10 flex-col">
+          <div className="flex items-center justify-center flex-col grow w-screen">
             {children}
           </div>
         </div>

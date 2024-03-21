@@ -7,7 +7,7 @@ export default function Home() {
       //<Poster/>
       //<Title/>
   return (
-    <main className="min-h-screen bg-[#0f172a] flex flex-col justify-center items-center">
+    <main className="flex flex-col justify-center items-center h-full my-8">
       <Game/>
     </main>
   );
