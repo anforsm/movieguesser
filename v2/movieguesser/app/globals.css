@@ -2,10 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@layer base {
+  :root {
+    --clue-gray: theme("colors.zinc[600]");
+    --clue-yellow: #c9b458;
+    --clue-green: #6aaa64;
+
+    --secondary-500: #83d57b;
+    --secondary-600: #75bd6f;
+    --secondary-700: #6aaa64;
+    --secondary-800: #4a7545;
+    --secondary-900: #40663c;
+
+
+    --text-col: theme("colors.slate[50]");
+    --text-col-secondary: theme("colors.neutral[500]");
+  }
+
+  .og {
+    --primary-600: theme("colors.slate[600]");
+    --primary-700: theme("colors.slate[700]");
+    --primary-800: theme("colors.slate[800]");
+    --primary-900: theme("colors.slate[900]");
+
+    --clue-gray: theme("colors.slate[600]");
+
+  }
+
+  .dark {
+    --primary-600: theme("colors.neutral[600]");
+    --primary-700: theme("colors.neutral[700]");
+    --primary-800: theme("colors.neutral[800]");
+    --primary-900: theme("colors.neutral[900]");
+  }
+
+  .light {
+    --primary-600: theme("colors.slate[300]");
+    --primary-700: theme("colors.slate[200]");
+    --primary-800: theme("colors.slate[100]");
+    --primary-900: theme("colors.slate[50]");
+
+    --text-col: theme("colors.slate[900]");
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,16 +52,6 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
