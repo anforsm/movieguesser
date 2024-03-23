@@ -48,6 +48,7 @@ const Tile = (props: any) => {
     if (!canFlip) return
     setCurrRotation((currRotation + Math.PI))
     setCanFlip(false)
+    props?.onFlip()
 
     setTimeout(() => {
       setCanFlip(true)

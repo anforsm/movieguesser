@@ -1,12 +1,13 @@
 import { Bounds, OrthographicCamera, PerspectiveCamera } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
+import { useEffect, useRef } from "react"
 
 
 const WIDTH = 500
 const DEPTH = 20
 const PERCENTAGE = 0.8
 
-const Score = (props: any) => {
+const Score3D = (props: any) => {
   return <Canvas shadows>
     <Bounds fit clip observe maxDuration={0} margin={1}/>
     {/* <PerspectiveCamera makeDefault position={[0, 0, 50]}/> */}
@@ -29,6 +30,34 @@ const Score = (props: any) => {
 
     </group>
   </Canvas>
+}
+
+const Score = (props: any) => {
+  const scorebar_ref = useRef(null)
+  const text_container_ref = useRef(null)
+
+  useEffect(() => {
+    const scorebar = scorebar_ref.current
+    if (scorebar) {
+      // @ts-ignore
+      scorebar.style.width = `${props.score}%`
+    }
+
+    const text_container = text_container_ref.current
+    if (text_container) {
+      if (props.score > 20) {
+        // @ts-ignore
+        text_container.style.left = `${props.score}%`
+      }
+    }
+
+  }, [props.score])
+
+  return <div className="w-full h-full bg-slate-100">
+      <div className="h-full bg-slate-500 relative px-2" ref={scorebar_ref}>
+        <p className={`text-2xl m-0 text-right ${props.score < 5 ? "text-black" : ""}`}>{props.score}</p>
+      </div>
+    </div>
 }
 
 export default Score

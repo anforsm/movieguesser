@@ -8,7 +8,8 @@ const Actor = (props: any) => {
       position={[...props.position, 0]} 
       size={[...props.size, props.thickness]}
       name={"Actor"} 
-      horizontalRot={false}>
+      horizontalRot={false}
+      onFlip={props.onFlip}>
 
         <TileFace 
           color={"#475569"}/>

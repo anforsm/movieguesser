@@ -8,7 +8,8 @@ const Poster = (props: any) => {
       position={[...props.position, 0]} 
       size={[...props.size, props.thickness]}
       name={"Poster"} 
-      horizontalRot={false}>
+      horizontalRot={false}
+      onFlip={props.onFlip}>
 
         <TileFace 
           color={"#475569"}/>

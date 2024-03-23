@@ -7,7 +7,7 @@ export default function Home() {
       //<Poster/>
       //<Title/>
   return (
-    <main className="flex flex-col justify-center items-center h-full my-8">
+    <main className="flex flex-col justify-center items-center h-full my-8 relative">
       <Game/>
     </main>
   );

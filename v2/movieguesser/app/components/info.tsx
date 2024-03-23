@@ -8,7 +8,8 @@ const Info = (props: any) => {
       position={[...props.position, 0]} 
       size={[...props.size, props.thickness]}
       name={props.name} 
-      horizontalRot={false}>
+      horizontalRot={false}
+      onFlip={props.onFlip}>
 
         <TileFace 
           color={"#475569"}/>

@@ -7,7 +7,8 @@ const Title = (props: any) => {
       position={[...props.position, 0]} 
       size={[...props.size, props.thickness]}
       name={"Title"} 
-      horizontalRot={true}>
+      horizontalRot={true}
+      onFlip={props.onFlip}>
 
         <TileFace 
           color={"#475569"}/>

@@ -11,6 +11,19 @@ import { cloneElement } from "react";
 import GuessBox from "./guessbox";
 import Score from "./score";
 
+const costs = [
+  10,
+  20,
+  5,
+  5,
+  5,
+  5,
+  10,
+  10,
+  10,
+  10,
+]
+
 
 const CARD_THICKNESS = 0.2;
 const layout = `
@@ -95,6 +108,7 @@ const CoreGame = (props: any) => {
         position: pos,
         size: size,
         key: i,
+        onFlip: () => props.onReveal(costs[i])
       })
     })
   }

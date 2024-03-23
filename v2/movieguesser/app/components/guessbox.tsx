@@ -2,8 +2,8 @@
 
 
 const GuessBox = (props: any) => {
-  return <div className="">
-    <input>
+  return <div className="w-full h-full text-black">
+    <input className="w-full h-full text-3xl">
     </input>
   </div>
 }
