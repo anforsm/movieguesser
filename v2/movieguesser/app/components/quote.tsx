@@ -12,7 +12,7 @@ const Quote = (props: any) => {
     let words = props.value.split(" ")
     let line = ""
     for (let i = 0; i < words.length; i++) {
-      if (line.length + words[i].length > 40) {
+      if (line.length + words[i].length > 60) {
         newQuote += line + "\n"
         line = ""
       }
@@ -34,7 +34,9 @@ const Quote = (props: any) => {
 
         <TileFace 
           color={"#40663c"}
-          text={quote}/>
+          text={quote}
+          fontSize={0.4}
+          />
 
     </Tile>
 }

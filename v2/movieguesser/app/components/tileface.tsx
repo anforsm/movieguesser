@@ -64,7 +64,7 @@ const TileFace = (props: any) => {
             >
             </Image>}
 
-            {props.text && <Text color={"white"} fontSize={0.5} position={[0, 0, h]}>
+            {props.text && <Text color={"white"} fontSize={props.fontSize ? props.fontSize : 0.5} position={[0, 0, h]}>
               {props.text}
             </Text>}
 
