@@ -24,7 +24,7 @@ const Game = (props: any) => {
     console.log(progress)
   }, [progress])
 
-  return <><LoadingCover progress={progress_}/><div className="flex justify-center items-center flex-col bg-primary-800 p-4 grow">
+  return <><LoadingCover progress={progress_}/><div className="flex justify-center items-center flex-col bg-primary-800 md:p-4 p-1 grow">
       <div className="h-8 w-full px-[1px] mb-4">
         <GuessBox/>
       </div>
