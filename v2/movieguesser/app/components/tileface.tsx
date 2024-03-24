@@ -43,7 +43,7 @@ const TileFace = (props: any) => {
               <planeGeometry args={[xs, HEADER_HEIGHT]} />
             </mesh>
 
-            <Text color={"white"} fontSize={0.3} position={[0, 0, h]} castShadow={false}>
+            <Text color={"white"} fontSize={0.4} position={[0, 0, h]} castShadow={false}>
               {props.name}
             </Text>
 
