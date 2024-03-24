@@ -112,7 +112,7 @@ const CoreGame = (props: any) => {
       })
     })
   }
-  return <div className="h-full max-w-[90vw] aspect-[2/3]">
+  return <div className="h-full aspect-[2/3]">
     <Canvas gl={{toneMapping: NoToneMapping}}>
       <Bounds fit clip observe maxDuration={0} margin={1}>
         <OrthographicCamera makeDefault position={[num_cols/4, -num_rows/4, 10]}/>
