@@ -15,6 +15,7 @@ const TileFace = (props: any) => {
     let mul = props.flipped ? -1 : 1;
     let scale_mul = [(xs - margin)/xs, (ys - margin)/ys, 1]
     let [xsm, ysm, zsm] = scale_mul
+    console.log(props.image)
 
     return <group
         scale={[

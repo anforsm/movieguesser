@@ -36,8 +36,8 @@ const Score = (props: any) => {
   const scorebar_ref = useRef(null)
   const text_container_ref = useRef(null)
 
-  return <div className="w-full h-full bg-slate-100">
-      <div className="h-full bg-slate-500 relative px-2 transition-all" style={{width: `${props.score}%`}}>
+  return <div className="w-full h-full bg-primary-900">
+      <div className="h-full bg-primary-600 relative px-2 transition-all" style={{width: `${props.score}%`}}>
         <p className={`text-2xl m-0 text-right ${props.score < 5 ? "text-black" : ""}`}>{props.score}</p>
       </div>
     </div>

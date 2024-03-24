@@ -15,11 +15,11 @@ const Title = (props: any) => {
 
         <TileFace 
           color={"#c9b458"}
-          text={"Lord of the ______"}/>
+          text={props.value}/>
 
         <TileFace 
           color={"#40663c"}
-          text={"Lord of the Rings"}/>
+          text={props.value}/>
 
     </Tile>
 }

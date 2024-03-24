@@ -91,16 +91,16 @@ const CoreGame = (props: any) => {
 
   const createTiles = (layout: any) => {
     return [
-      <Title thickness={CARD_THICKNESS}/>,
-      <Poster thickness={CARD_THICKNESS}/>,
-      <Info thickness={CARD_THICKNESS} name="Release Year" value="2001"/>,
-      <Info thickness={CARD_THICKNESS} name="Rating" value="8.9"/>,
-      <Info thickness={CARD_THICKNESS} name="Director" value="P. Jackson"/>,
-      <Info thickness={CARD_THICKNESS} name="Budget" value="$93M"/>,
+      <Title thickness={CARD_THICKNESS} value={props.movie["title"]}/>,
+      <Poster thickness={CARD_THICKNESS} value={props.movie["poster"]}/>,
+      <Info thickness={CARD_THICKNESS} name="Release Year" value={props.movie["year"]}/>,
+      <Info thickness={CARD_THICKNESS} name="Rating" value={props.movie["rating"]}/>,
+      <Info thickness={CARD_THICKNESS} name="Director" value={props.movie["director"]}/>,
+      <Info thickness={CARD_THICKNESS} name="Budget" value={props.movie["budget"]}/>,
       <Quote thickness={CARD_THICKNESS}/>,
-      <Actor thickness={CARD_THICKNESS} name="Elijah Wood" role="Frodo Baggins" image="elijah.webp"/>,
-      <Actor thickness={CARD_THICKNESS} name="Ian McKellen" role="Gandalf" image="ian.webp"/>,
-      <Actor thickness={CARD_THICKNESS} name="Viggo Mortensen" role="Aragorn" image="viggo.webp"/>
+      <Actor thickness={CARD_THICKNESS} name={props.movie.actors[0]["name"]} role="Frodo Baggins" image={props.movie.actors[0]["image"]}/>,
+      <Actor thickness={CARD_THICKNESS} name={props.movie.actors[1]["name"]} role="Gandalf" image={props.movie.actors[1]["image"]}/>,
+      <Actor thickness={CARD_THICKNESS} name={props.movie.actors[2]["name"]} role="Aragorn" image={props.movie.actors[2]["image"]}/>
     ].map((tile, i) => {
       let [size, pos] = getTileSizeAndPosition(i, layout)
       return cloneElement(tile, {

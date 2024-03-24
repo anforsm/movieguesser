@@ -16,11 +16,11 @@ const Poster = (props: any) => {
 
         <TileFace 
           color={"#c9b458"}
-          image={"/lotr.jpg"}/>
+          image={props.value}/>
 
         <TileFace 
           color={"#40663c"}
-          image={"/lotr.jpg"}/>
+          image={props.value}/>
 
     </Tile>
 }

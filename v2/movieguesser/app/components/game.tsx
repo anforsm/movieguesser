@@ -25,16 +25,19 @@ const Game = (props: any) => {
   }, [progress])
 
   return <><LoadingCover progress={progress_}/><div className="flex justify-center items-center flex-col bg-primary-800 p-4 grow">
-      <div className="h-14 w-full mb-4">
+      <div className="h-8 w-full px-[1px] mb-4">
         <GuessBox/>
       </div>
-      <div className="w-full h-8 mb-4">
+      <div className="w-full h-8 px-[1px] mb-2">
         <Score score={score}/>
       </div>
       <div className="grow">
-        <CoreGame onReveal={(cost: number) => {
-          setScore(Math.max(score - cost, 0))
-        }} />
+        <CoreGame 
+          movie={props.movie}
+          onReveal={(cost: number) => {
+            setScore(Math.max(score - cost, 0))
+          }}
+        />
       </div>
     </div>
   </>
