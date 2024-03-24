@@ -8,7 +8,7 @@ const movie = getMovie();
 
 export default function Home() {
   return (
-    <main className="flex flex-col justify-center items-center h-full my-8 relative">
+    <main className="flex flex-col justify-center items-center h-full md:my-8 my-2 relative">
       <Game movie={movie}/>
     </main>
   );
