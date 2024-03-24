@@ -15,7 +15,7 @@ const Quote = (props: any) => {
 
         <TileFace 
           color={"#40663c"}
-          text={"I wish the ring had never come to me."}/>
+          text={props.value}/>
 
     </Tile>
 }

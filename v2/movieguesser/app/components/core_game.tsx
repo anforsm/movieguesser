@@ -97,7 +97,7 @@ const CoreGame = (props: any) => {
       <Info thickness={CARD_THICKNESS} name="Rating" value={props.movie["rating"]}/>,
       <Info thickness={CARD_THICKNESS} name="Director" value={props.movie["director"]}/>,
       <Info thickness={CARD_THICKNESS} name="Budget" value={props.movie["budget"]}/>,
-      <Quote thickness={CARD_THICKNESS}/>,
+      <Quote thickness={CARD_THICKNESS} value={props.movie["quote"]}/>,
       <Actor thickness={CARD_THICKNESS} name={props.movie.actors[0]["name"]} role="Frodo Baggins" image={props.movie.actors[0]["image"]}/>,
       <Actor thickness={CARD_THICKNESS} name={props.movie.actors[1]["name"]} role="Gandalf" image={props.movie.actors[1]["image"]}/>,
       <Actor thickness={CARD_THICKNESS} name={props.movie.actors[2]["name"]} role="Aragorn" image={props.movie.actors[2]["image"]}/>
