@@ -39,6 +39,8 @@ const layout = `
 666666666666
 666666666666
 666666666666
+666666666666
+666666666666
 777788889999
 777788889999
 777788889999
@@ -112,7 +114,7 @@ const CoreGame = (props: any) => {
       })
     })
   }
-  return <div className="h-full aspect-[2/3]">
+  return <div className="h-full" style={{aspectRatio: `${num_cols}/${num_rows}` }}>
     <Canvas gl={{toneMapping: NoToneMapping}}>
       <Bounds fit clip observe maxDuration={0} margin={1}>
         <OrthographicCamera makeDefault position={[num_cols/4, -num_rows/4, 10]}/>
