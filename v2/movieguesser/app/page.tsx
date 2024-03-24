@@ -7,8 +7,6 @@ import getMovie from "./dayinfo";
 const movie = getMovie();
 
 export default function Home() {
-  console.log(movie)
-
   return (
     <main className="flex flex-col justify-center items-center h-full my-8 relative">
       <Game movie={movie}/>
