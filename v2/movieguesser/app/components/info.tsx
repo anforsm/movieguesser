@@ -16,7 +16,9 @@ const Info = (props: any) => {
 
         <TileFace 
           color={"#40663c"}
-          text={props.value}/>
+          text={props.value}
+          fontSize={props.fontSize}
+        />
 
     </Tile>
 }

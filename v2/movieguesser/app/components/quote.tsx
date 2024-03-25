@@ -34,7 +34,7 @@ const Quote = (props: any) => {
 
         <TileFace 
           color={"#40663c"}
-          text={quote}
+          text={"Placeholder quote"}
           fontSize={0.4}
           />
 

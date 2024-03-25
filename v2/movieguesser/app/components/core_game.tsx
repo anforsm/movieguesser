@@ -10,6 +10,10 @@ import Actor from "./actor";
 import { cloneElement } from "react";
 import GuessBox from "./guessbox";
 import Score from "./score";
+import Year from "./year";
+import Rating from "./rating";
+import Director from "./director";
+import Budget from "./budget";
 
 const costs = [
   10,
@@ -93,10 +97,10 @@ const CoreGame = (props: any) => {
     return [
       <Title thickness={CARD_THICKNESS} value={props.movie["title"]}/>,
       <Poster thickness={CARD_THICKNESS} value={props.movie["poster"]}/>,
-      <Info thickness={CARD_THICKNESS} name="Release Year" value={props.movie["year"]}/>,
-      <Info thickness={CARD_THICKNESS} name="Rating" value={props.movie["rating"]}/>,
-      <Info thickness={CARD_THICKNESS} name="Director" value={props.movie["director"]}/>,
-      <Info thickness={CARD_THICKNESS} name="Budget" value={props.movie["budget"]}/>,
+      <Year thickness={CARD_THICKNESS} value={props.movie["year"]}/>,
+      <Rating thickness={CARD_THICKNESS} value={props.movie["rating"]}/>,
+      <Director thickness={CARD_THICKNESS} value={props.movie["director"]}/>,
+      <Budget thickness={CARD_THICKNESS} value={props.movie["budget"]}/>,
       <Quote thickness={CARD_THICKNESS} value={props.movie["quote"]}/>,
       <Actor thickness={CARD_THICKNESS} name={props.movie.actors[0]["name"]} role="Frodo Baggins" image={props.movie.actors[0]["image"]}/>,
       <Actor thickness={CARD_THICKNESS} name={props.movie.actors[1]["name"]} role="Gandalf" image={props.movie.actors[1]["image"]}/>,
